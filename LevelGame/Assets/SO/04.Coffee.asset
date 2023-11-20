@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b4bef277de1847bf66b06fc25e207, type: 3}
+  m_Name: 04.Coffee
+  m_EditorClassIdentifier: 
+  blockColor:
+  - {r: 0.990566, g: 0.93103516, b: 0.8566215, a: 1}
+  - {r: 0.8962264, g: 0.81981856, b: 0.7243087, a: 1}
+  - {r: 0.74509805, g: 0.60784316, b: 0.48235297, a: 1}
+  - {r: 0.59607846, g: 0.48627454, b: 0.38431376, a: 1}
+  - {r: 0.5377358, g: 0.39744598, b: 0.26717687, a: 1}
+  - {r: 0.41568628, g: 0.2759704, b: 0.20784314, a: 1}
+  - {r: 0.3584906, g: 0.24056773, b: 0.18488191, a: 1}
+  - {r: 0.26415092, g: 0.20185116, b: 0.18108457, a: 1}
+  - {r: 0.21698111, g: 0.17123246, b: 0.15693602, a: 1}
+  - {r: 0.18823531, g: 0.14901961, b: 0.14901961, a: 1}
+  blockSprite:
+  - {fileID: 21300000, guid: 9ea333d094f776443a269d12c8239cf9, type: 3}
+  - {fileID: 21300000, guid: 191d2c530ea1a0b4ba9c3bd69530e04d, type: 3}
+  - {fileID: 21300000, guid: dbd69f8c9953e544d848a84ecfaa5bfa, type: 3}
+  - {fileID: 21300000, guid: 596a1c48e9c46bd4da77a69df1b15c56, type: 3}
+  - {fileID: 21300000, guid: e82901b5d0ac6a642aa53bfb376b75bd, type: 3}
+  - {fileID: 21300000, guid: d38b337a767adc741af1af3a2d15c154, type: 3}
+  - {fileID: 21300000, guid: 611ca2ae262f5f34499eb0fbff0ae572, type: 3}
+  - {fileID: 21300000, guid: 4648aab94d3ebae4d8b045f13e7c5ddc, type: 3}
+  - {fileID: 21300000, guid: b2589ec6ae8ae674fb79953f2b30fa1d, type: 3}
+  - {fileID: 21300000, guid: 53a194d1ab765dd489fb9f43da9db440, type: 3}
+  backgroundColor: {r: 0.52156866, g: 0.44705027, b: 0.4117647, a: 1}
+  blankColor: {r: 0.745283, g: 0.6886554, b: 0.6515367, a: 1}
+  play: {r: 0.5943396, g: 0.34976023, b: 0.18316123, a: 1}
+  rank: {r: 0.627451, g: 0.5529412, b: 0.5137255, a: 1}
+  sound: {r: 0.78823537, g: 0.70980394, b: 0.6666667, a: 1}
+  store: {r: 0.93725497, g: 0.8745099, b: 0.83921576, a: 1}
+  setting: {r: 0.3301887, g: 0.28450218, b: 0.23881571, a: 1}
+  scoreBack: {r: 0.2627451, g: 0.21568629, b: 0.16862746, a: 1}
+  icons: {r: 1, g: 1, b: 1, a: 1}
+  warning: {r: 0.6603774, g: 0.45435098, b: 0.35926187, a: 1}
+  pedigreeBackground: {r: 0.16981131, g: 0.14555131, b: 0.118013516, a: 1}
+  heart: {r: 0.4156863, g: 0.21176472, b: 0.20784315, a: 0}
+  ring: {r: 0.3301887, g: 0.28865552, b: 0.25750563, a: 0}
+  ad: {r: 0.7830189, g: 0.6772352, b: 0.55156046, a: 1}
+  x: {r: 0.8773585, g: 0.8402302, b: 0.80010676, a: 1}

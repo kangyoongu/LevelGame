@@ -31,8 +31,8 @@ public class ShareOnSocialMedia : MonoBehaviour
 
         new NativeShare()
             .AddFile(path)
-            .SetSubject("This is my score.")
-            .SetText("How much can you do?")
+            .SetSubject("")
+            .SetText("This is my score. How much can you do?\nhttps://play.google.com/store/apps/details?id=com.hyperexit.challengergame")
             .Share();
 
 

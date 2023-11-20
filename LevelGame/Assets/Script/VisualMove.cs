@@ -12,6 +12,7 @@ public class VisualMove : MonoBehaviour
     private LineRenderer lineRenderer;
 
     [HideInInspector] public GameObject warning;
+    public AudioClip clips;
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -27,9 +28,10 @@ public class VisualMove : MonoBehaviour
     public void SetColor()//자신 칸의 값에 따라 색 바꿈
     {
         int value = transform.parent.GetComponent<NodeInfo>().num;
-        Color color = NodeManager.instance.nodeColor[value];
+        transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = NodeManager.instance.inside[value - 1];
+        Color color = NodeManager.instance.nodeColor[value-1];
         spriteRenderer.color = color;
-
+        warning.GetComponent<SpriteRenderer>().color = NodeManager.instance.warningColor;
         Gradient gradient = new Gradient();
         GradientColorKey[] colorKeys = new GradientColorKey[1];
         colorKeys[0].color = color;
@@ -42,6 +44,8 @@ public class VisualMove : MonoBehaviour
     }
     public IEnumerator Move(VisualMove target, int makeNum)//타겟 위치로 움직임
     {
+        RandomPitchPlay rand = GetComponent<RandomPitchPlay>();
+        rand.Play(clips);
         for(int i = 0; i < positions.Count; i++)
         {
             transform.DOMove(positions[i], speed).SetEase(Ease.Linear);
@@ -64,7 +68,7 @@ public class VisualMove : MonoBehaviour
         target.SetColor();
         NodeManager.instance.blankNode.Add(GetComponentInParent<NodeInfo>());
         yield return new WaitForEndOfFrame();
-        NodeManager.instance.EndCheck();
+        NodeManager.instance.EndCheck(false);
         Destroy(gameObject);
     }
     public void ToReset()
@@ -91,6 +95,7 @@ public class VisualMove : MonoBehaviour
         NodeManager.instance.blankNode.Add(transform.parent.GetComponent<NodeInfo>());
         float delay = Random.Range(0f, 1.5f);
         yield return new WaitForSeconds(delay);
+        NodeManager.instance.PopSoundPlay();
         transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InElastic).OnComplete(() =>
         {
             Destroy(gameObject);

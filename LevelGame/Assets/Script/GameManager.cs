@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,24 +13,22 @@ public class GameManager : MonoBehaviour
     List<NodeInfo> connects = new List<NodeInfo>();
     [HideInInspector] public bool onOtherNode = true;
     [HideInInspector] public bool canMove = false;
-    public int max = 6;
+    public int max = 5;
 
+    public GameObject[] particles;
     public void Awake()
     {
+        PlayerPrefs.DeleteAll();
         if (instance == null) instance = this;
         if (!PlayerPrefs.HasKey("Best"))
         {
             PlayerPrefs.SetInt("Best", 0);
         }
-        if (!PlayerPrefs.HasKey("Current"))
-        {
-            PlayerPrefs.SetInt("Current", 0);
-        }
         Application.targetFrameRate = 60;
     }
     void Update()
     {
-        if (Input.touchCount == 1)//터치가 1개만 있으면
+        if (Input.touchCount == 1 && !IsPointerOverUIObject(Input.GetTouch(0).position))//터치가 1개만 있으면
         {
             if (canMove == true)
             {
@@ -40,11 +39,24 @@ public class GameManager : MonoBehaviour
         {
             if (click == true)
             {
-                foreach (NodeInfo node in connects[0].neighbor)
+                if (connects[0].num == 10)
                 {
-                    if (node.num == connects[0].num)
+                    foreach (NodeInfo node in NodeManager.instance.fullNodes)
                     {
-                        node.visualmove.warning.SetActive(false);
+                        if (node.num == 10)
+                        {
+                            node.visualmove.warning.SetActive(false);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (NodeInfo node in connects[0].neighbor)
+                    {
+                        if (node.num == connects[0].num)
+                        {
+                            node.visualmove.warning.SetActive(false);
+                        }
                     }
                 }
                 click = false;
@@ -56,6 +68,11 @@ public class GameManager : MonoBehaviour
                     if (connects[connects.Count - 1].num > max)//최고기록 갱신하면 하나 더 나옴
                     {
                         max = connects[connects.Count - 1].num;
+                        if(max == 10)
+                        {
+                            particles[0].SetActive(true);
+                            particles[1].SetActive(true);
+                        }
                         StartCoroutine(connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, 2));
                     }
                     else
@@ -69,7 +86,7 @@ public class GameManager : MonoBehaviour
                     connects[0].visualmove.ToReset();
                 }
             }
-         }
+        }
     }
 
     private void OnMouseClick()
@@ -107,11 +124,27 @@ public class GameManager : MonoBehaviour
                         connects.Add(clicked);
                         connects[0].visualmove.AddPosition(clicked.transform.position);
                         click = true;
-                        foreach(NodeInfo node in connects[0].neighbor)
+                        if (connects[0].num == 10)
                         {
-                            if(node.num == connects[0].num)
+                            foreach (NodeInfo node in NodeManager.instance.fullNodes)
                             {
-                                node.visualmove.warning.SetActive(true);
+                                if (node.num == 10 && node != clicked)
+                                {
+                                    node.visualmove.warning.SetActive(true);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (connects.Count > 0 && connects[0].visualmove != null)
+                            {
+                                foreach (NodeInfo node in connects[0].neighbor)
+                                {
+                                    if (node.num == connects[0].num)
+                                    {
+                                        node.visualmove.warning.SetActive(true);
+                                    }
+                                }
                             }
                         }
                     }
@@ -138,7 +171,7 @@ public class GameManager : MonoBehaviour
                                 connects.Add(clicked);
                                 connects[0].visualmove.AddPosition(clicked.transform.position);
                             }
-                            else if (clicked.num == connects[0].num && !connects[0].neighbor.Contains(clicked))//이웃은 안합쳐지게
+                            else if (clicked.num == connects[0].num && !connects[0].neighbor.Contains(clicked) && connects[0].num < 10)//이웃은 안합쳐지게
                             {
                                 connects.Add(clicked);
                                 connects[0].visualmove.AddPosition(clicked.transform.position);
@@ -149,5 +182,20 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
+    public bool IsPointerOverUIObject(Vector2 touchPos)
+    {
+        PointerEventData eventDataCurrentPosition
+            = new PointerEventData(EventSystem.current);
+
+        eventDataCurrentPosition.position = touchPos;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+
+
+        EventSystem.current
+        .RaycastAll(eventDataCurrentPosition, results);
+
+        return results.Count > 0;
     }
 }

@@ -5,6 +5,7 @@ using DG.Tweening;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Audio;
 
 public enum Dir : short
 {
@@ -29,6 +30,8 @@ public class UIManager : MonoBehaviour
     public UI[] mainUI;
     public UI[] playUI;
     public UI[] survivalUI;
+    public UI[] themeUI;
+    public UI[] menuUI;
 
     public static UIManager instance;
     bool digree = false;
@@ -37,7 +40,15 @@ public class UIManager : MonoBehaviour
 
     public Sprite[] mute;
     public Image muteImage;
-    
+
+    public GameObject[] block;
+
+    [Header("Sounds")]
+    public AudioSource mainSound;
+    public AudioSource gameoverSound;
+
+
+    public AudioMixer mixer;
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -45,11 +56,14 @@ public class UIManager : MonoBehaviour
         {
             PlayerPrefs.SetInt("Sound", 1);
         }
+    }
+    private void Start()
+    {
         MuteCheck();
     }
-
     public void GameOverUIIn()
     {
+        gameoverSound.Play();
         In(gameOverUI);
         Out(playUI);
     }
@@ -59,7 +73,8 @@ public class UIManager : MonoBehaviour
     }
     public void MainUIIn()
     {
-        cam.DOMoveY(-1.5f, 0.5f);
+        mainSound.Play();
+        cam.DOMoveY(-1.45f, 0.5f);
         In(mainUI);
     }
 
@@ -86,10 +101,29 @@ public class UIManager : MonoBehaviour
     {
         Out(survivalUI);
     }
+    public void ThemeUIIn()
+    {
+        In(themeUI);
+    }
+    public void ThemeUIOut()
+    {
+        Out(themeUI);
+    }
+    public void MenuUIIn()
+    {
+        In(menuUI);
+    }
+    public void MenuUIOut()
+    {
+        Out(menuUI);
+    }
     private void In(UI[] lst)
     {
+        block[0].SetActive(true);
+        float max = 0;
         for (int i = 0; i < lst.Length; i++)
         {
+            if (max < lst[i].time) max = lst[i].time;
             if (lst[i].changeUI != null)
             {
                 if (lst[i].setActive) lst[i].changeUI.gameObject.SetActive(true);
@@ -107,26 +141,31 @@ public class UIManager : MonoBehaviour
                 lst[i].fadeText.DOFade(lst[i].fadeFloat / 255f, lst[i].time).SetEase(Ease.Linear);
             }
         }
+        StartCoroutine(BlockTime(max));
     }
 
     private void Out(UI[] lst)
     {
+        block[0].SetActive(true);
+        float max = 0;
         for (int i = 0; i < lst.Length; i++)
         {
+            if (max < lst[i].time) max = lst[i].time;
+            int index = i;
             if (lst[i].changeUI != null)
             {
                 if (lst[i].dir == Dir.y)
                 {
                     lst[i].changeUI.DOAnchorPosY(lst[i].inAndOut.y, lst[i].time).SetEase(Ease.Linear).OnComplete(() =>
                     {
-                        if (lst[i].setActive) lst[i].changeUI.gameObject.SetActive(false);
+                        if (lst[index].setActive) lst[index].changeUI.gameObject.SetActive(false);
                     });
                 }
                 else
                 {
                     lst[i].changeUI.DOAnchorPosX(lst[i].inAndOut.y, lst[i].time).SetEase(Ease.Linear).OnComplete(() =>
                     {
-                        if (lst[i].setActive) lst[i].changeUI.gameObject.SetActive(false);
+                        if (lst[index].setActive) lst[index].changeUI.gameObject.SetActive(false);
                     });
                 }
             }
@@ -134,19 +173,24 @@ public class UIManager : MonoBehaviour
             {
                 lst[i].fadeUI.DOFade(0, lst[i].time).SetEase(Ease.Linear).OnComplete(() =>
                 {
-                    if (lst[i].setActive) lst[i].fadeUI.gameObject.SetActive(false);
+                    if (lst[index].setActive) lst[index].fadeUI.gameObject.SetActive(false);
                 });
             }
             else
             {
                 lst[i].fadeText.DOFade(0, lst[i].time).SetEase(Ease.Linear).OnComplete(() =>
                 {
-                    if (lst[i].setActive) lst[i].changeUI.gameObject.SetActive(false);
+                    if (lst[index].setActive) lst[index].changeUI.gameObject.SetActive(false);
                 });
             }
         }
+        StartCoroutine(BlockTime(max));
     }
-
+    IEnumerator BlockTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        block[0].SetActive(false);
+    }
     public void OnClickDigree()
     {
         digree = !digree;
@@ -162,12 +206,14 @@ public class UIManager : MonoBehaviour
     public void OnClickGoToMain()//메인화면으로 가는 버튼 누르면
     {
         GameOverUIOut();
+        MenuUIOut();
         NodeManager.instance.RemoveVisual();
         StartCoroutine(NodeManager.instance.GoToMain());
     }
     public void OnClickAgain()//다시하기 누르면
     {
         GameOverUIOut();
+        MenuUIOut();
         NodeManager.instance.RemoveVisual();
         StartCoroutine(AgainDelay());
     }
@@ -188,10 +234,33 @@ public class UIManager : MonoBehaviour
         if (PlayerPrefs.GetInt("Sound") == 1)
         {
             muteImage.sprite = mute[0];
+            mixer.SetFloat("SFX", 0f);
         }
         else
         {
             muteImage.sprite = mute[1];
+            mixer.SetFloat("SFX", -80f);
         }
+    }
+    public void OnClickRank()
+    {
+        GPGSBinder.Inst.Login(Login);
+        /*if (!PlayerPrefs.HasKey("login"))
+        {
+            GPGSBinder.Inst.Login(Login);
+        }
+        else
+        {
+            GPGSBinder.Inst.ReportLeaderboard(LevelGame.leaderboard_rank, PlayerPrefs.GetInt("Best"));
+            GPGSBinder.Inst.ShowTargetLeaderboardUI(LevelGame.leaderboard_rank);
+        }*/
+    }
+    void Login(bool succ, UnityEngine.SocialPlatforms.ILocalUser user)
+    {
+        if (succ == true)
+        {
+            PlayerPrefs.SetInt("login", 1);
+        }
+        Debug.Log($"{succ}, {user.userName}, {user.id}, {user.state}, {user.underage}");
     }
 }

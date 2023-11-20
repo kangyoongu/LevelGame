@@ -7,7 +7,7 @@ public class AdBackground : MonoBehaviour
 {
     public Image bar;
 
-    bool minus = false;
+    public static bool minus = false;
     private void OnEnable()
     {
         bar.fillAmount = 1;
@@ -20,7 +20,7 @@ public class AdBackground : MonoBehaviour
             bar.fillAmount -= Time.deltaTime * 0.13f;
             if (bar.fillAmount == 0)
             {
-                UIManager.instance.SurvivalUIOut();
+                NodeManager.instance.OnClickDone();
                 minus = false;
             }
         }

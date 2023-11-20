@@ -13,10 +13,16 @@ public class NodeManager : MonoBehaviour
     public GameObject visual;
 
     public Color[] nodeColor;
+    public Sprite[] inside;
     public TextMeshProUGUI[] bestText;
     public TextMeshProUGUI[] currentText;
     private int score = 0;
     bool resurvive = false;
+
+    public RandomPitchPlay popSound;
+    public RandomPitchPlay makeSound;
+
+    [HideInInspector] public Color warningColor;
     public int Score {
         get { return score; }
         set
@@ -26,6 +32,9 @@ public class NodeManager : MonoBehaviour
             if (score > PlayerPrefs.GetInt("Best"))
             {
                 PlayerPrefs.SetInt("Best", score);
+                if (PlayerPrefs.HasKey("login")){
+                    GPGSBinder.Inst.ReportLeaderboard(LevelGame.leaderboard_rank, score);
+                }
             }
             RenewalText();
         }
@@ -53,6 +62,7 @@ public class NodeManager : MonoBehaviour
         node.num = num;
         Instantiate(visual, node.transform.position, node.transform.rotation, node.transform).GetComponent<VisualMove>().SetColor();
         blankNode.Remove(node);
+        makeSound.JustPlay();
     }
     public void MakeNode()
     {
@@ -60,7 +70,7 @@ public class NodeManager : MonoBehaviour
         MakeVisual(blankNode[index], Random.Range(1, 4));
     }
 
-    public void EndCheck()//게임이 끝났는지 체크
+    public bool EndCheck(bool chance)//게임이 끝났는지 체크
     {
         ResetBlank();
         int index = 1;
@@ -92,14 +102,22 @@ public class NodeManager : MonoBehaviour
             {
                 for(int x = 0; x < node.Count; x++)
                 {
-                    if(node[j].num == node[x].num && j != x && !node[j].neighbor.Contains(node[x]))
+                    if(node[j].num == node[x].num && j != x && !node[j].neighbor.Contains(node[x]) && node[j].num < 10 && node[x].num < 10)
                     {
-                        return;
+                        return false;
                     }
                 }
             }
         }
-        GameOver();
+        if (chance == false)
+        {
+            StartCoroutine(GameOver());
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     private void PutIndex(int index, NodeInfo nodeInfo)
@@ -121,9 +139,10 @@ public class NodeManager : MonoBehaviour
             fullNodes[i].blankIndex = 0;
         }
     }
-    public void GameOver()//게임 끝남
+    public IEnumerator GameOver()//게임 끝남
     {
-        if (Score > PlayerPrefs.GetInt("Best") * 0.7f && resurvive == false)
+        yield return new WaitForSeconds(3);
+        if (((Score >= 450 && Random.value > 0.5f) || Score >= 700) && resurvive == false)
         {
             resurvive = true;
             UIManager.instance.SurvivalUIIn();
@@ -145,23 +164,30 @@ public class NodeManager : MonoBehaviour
     public IEnumerator StartWork()//시작할 때 할 일들
     {
         Score = 0;
-        GameManager.instance.max = 6;
+        GameManager.instance.max = 5;
+        resurvive = false;
         List<NodeInfo> list = new List<NodeInfo>(fullNodes);
         blankNode = new List<NodeInfo>(fullNodes);
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 8; i++)
         {
             int index = Random.Range(0, list.Count);
             MakeVisual(list[index], Random.Range(1, 4));
             list.Remove(list[index]);
         }
         yield return new WaitForEndOfFrame();
-        EndCheck();
+        EndCheck(false);
         yield return new WaitForSeconds(0.6f);
         GameManager.instance.canMove = true;
+        UIManager.instance.block[1].SetActive(false);
     }
-    public void RemoveVisual()//블록들 팡팡 터트리는거
+    public void PopSoundPlay()
     {
-        for(int i = 0; i < fullNodes.Length; i++)
+        popSound.Play();
+    }
+    public void RemoveVisual()//블록들 터트리는거
+    {
+        UIManager.instance.block[1].SetActive(true);
+        for (int i = 0; i < fullNodes.Length; i++)
         {
             fullNodes[i].num = 0;
             if (!blankNode.Contains(fullNodes[i]))
@@ -172,44 +198,55 @@ public class NodeManager : MonoBehaviour
     }
     public IEnumerator GoToMain()//메인화면으로 가는거
     {
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(2.2f);
+        UIManager.instance.block[1].SetActive(false);
         ResetBlank();
         Score = 0;
         UIManager.instance.MainUIIn();
+        UIManager.instance.PlayUIOut();
     }
     public void OnClickAd()//광고보기 누르면
     {
+        UIManager.instance.block[2].SetActive(true);
         UIManager.instance.SurvivalUIOut();
-        List<int> nums = new List<int>();
-        for (int i = 0; i < fullNodes.Length; i++)
-        {
-            if (fullNodes[i].num != 0)
-            {
-                nums.Add(fullNodes[i].num);
-                fullNodes[i].num = 0;
-            }
-            if (!blankNode.Contains(fullNodes[i]))
-            {
-                StartCoroutine(fullNodes[i].visualmove.Disapear());
-            }
-        }
-        StartCoroutine(ReturnBlock(nums));
+        AdBackground.minus = false;
+        StartCoroutine(ReturnBlock());
     }
-    private IEnumerator ReturnBlock(List<int> nums)
+    private IEnumerator ReturnBlock()
     {
-        yield return new WaitForSeconds(1.5f);
-        for(int i = 0; i < nums.Count; i++)
+        while (EndCheck(true))
         {
-            float delay = Random.Range(0f, 0.2f);
-            yield return new WaitForSeconds(delay);
-            NodeInfo node = blankNode[Random.Range(0, blankNode.Count)];
-            MakeVisual(node, nums[i]);
-            blankNode.Remove(node);
+            List<int> nums = new List<int>();
+            for (int i = 0; i < fullNodes.Length; i++)
+            {
+                if (fullNodes[i].num != 0)
+                {
+                    nums.Add(fullNodes[i].num);
+                    fullNodes[i].num = 0;
+                }
+                if (!blankNode.Contains(fullNodes[i]))
+                {
+                    StartCoroutine(fullNodes[i].visualmove.Disapear());
+                }
+            }
+            yield return new WaitForSeconds(1.5f);
+            for (int i = 0; i < nums.Count; i++)
+            {
+                float delay = Random.Range(0f, 0.2f);
+                yield return new WaitForSeconds(delay);
+                NodeInfo node = blankNode[Random.Range(0, blankNode.Count)];
+                MakeVisual(node, nums[i]);
+                blankNode.Remove(node);
+            }
+            yield return new WaitForSeconds(0.5f);
         }
+        UIManager.instance.block[2].SetActive(false);
         GameManager.instance.canMove = true;
     }
     public void OnClickDone()//끝내기 누르면
     {
+        AdBackground.minus = false;
+        UIManager.instance.SurvivalUIOut();
         UIManager.instance.GameOverUIIn();
         UIManager.instance.PlayUIOut();
         resurvive = false;
