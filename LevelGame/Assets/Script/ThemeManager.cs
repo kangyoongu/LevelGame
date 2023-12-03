@@ -23,8 +23,8 @@ public class ThemeManager : MonoBehaviour
     public Image[] pedigreeIcon;
     public Image pedigreeBackground;
     public Image ring;
-    public Image ad;
-    public Image heart;
+    public Image[] ad;
+    public Image[] heart;
     public Image x;
     public Transform[] buys;
     public Transform get;
@@ -142,8 +142,15 @@ public class ThemeManager : MonoBehaviour
         }
         pedigreeBackground.color = theme.pedigreeBackground;
         x.color = theme.x;
-        ad.color = theme.ad;
         ring.color = theme.ring;
-        heart.color = theme.heart;
+        foreach (Image image in heart)
+        {
+            image.color = theme.heart;
+        }
+        foreach (Image image in ad)
+        {
+            image.color = theme.ad;
+        }
+        heart[1].color = new Color(heart[1].color.r, heart[1].color.g, heart[1].color.b, 1);
     }
 }

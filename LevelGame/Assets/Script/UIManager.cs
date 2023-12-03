@@ -6,6 +6,7 @@ using System;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Audio;
+using GooglePlayGames;
 
 public enum Dir : short
 {
@@ -49,16 +50,24 @@ public class UIManager : MonoBehaviour
 
 
     public AudioMixer mixer;
+
+    public GameObject ad;
     private void Awake()
     {
+        PlayerPrefs.DeleteAll();
         if (instance == null) instance = this;
         if (!PlayerPrefs.HasKey("Sound"))
         {
             PlayerPrefs.SetInt("Sound", 1);
         }
+        if (!PlayerPrefs.HasKey("Ad"))
+        {
+            PlayerPrefs.SetInt("Ad", 1);
+        }
     }
     private void Start()
     {
+        if (PlayerPrefs.GetInt("Ad") == 0) ad.SetActive(false);
         MuteCheck();
     }
     public void GameOverUIIn()
@@ -244,23 +253,24 @@ public class UIManager : MonoBehaviour
     }
     public void OnClickRank()
     {
-        GPGSBinder.Inst.Login(Login);
-        /*if (!PlayerPrefs.HasKey("login"))
+        if (PlayGamesPlatform.Instance.localUser.authenticated == false)
         {
-            GPGSBinder.Inst.Login(Login);
+            _ = GPGSBinder.Inst.Authenticate();
         }
         else
         {
-            GPGSBinder.Inst.ReportLeaderboard(LevelGame.leaderboard_rank, PlayerPrefs.GetInt("Best"));
-            GPGSBinder.Inst.ShowTargetLeaderboardUI(LevelGame.leaderboard_rank);
-        }*/
-    }
-    void Login(bool succ, UnityEngine.SocialPlatforms.ILocalUser user)
-    {
-        if (succ == true)
-        {
-            PlayerPrefs.SetInt("login", 1);
+            GPGSBinder.Inst.ReportLeaderboard(GPGIds.leaderboard_rank, PlayerPrefs.GetInt("Best"));
+            GPGSBinder.Inst.ShowTargetLeaderboardUI(GPGIds.leaderboard_rank);
         }
-        Debug.Log($"{succ}, {user.userName}, {user.id}, {user.state}, {user.underage}");
+    }
+    public void OnClickRemoveAd()
+    {
+        ShopScript.instance.NonConsumableRemoveAd_Press(RemoveAd);
+    }
+
+    private void RemoveAd()
+    {
+        PlayerPrefs.SetInt("Ad", 0);
+        ad.SetActive(false);
     }
 }

@@ -1,9 +1,11 @@
-lastUpgrade=01014
-proj.pluginVersion=0.10.14
+lastUpgrade=01101
+proj.pluginVersion=0.11.01
 proj.AppId=866801118614
-and.BundleId=com.hyperexit.challengergame
+and.BundleId=com.hyperexit.challenger
 proj.classDir=Assets
-proj.ConstantsClassName=LevelGame
-and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0d%0a%3c%21--Google+Play+game+services+IDs.+Save+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.--%3e%0d%0a%3cresources%3e%0d%0a++%3c%21--app_id--%3e%0d%0a++%3cstring+name%3d%22app_id%22+translatable%3d%22false%22%3e866801118614%3c%2fstring%3e%0d%0a++%3c%21--package_name--%3e%0d%0a++%3cstring+name%3d%22package_name%22+translatable%3d%22false%22%3ecom.hyperexit.challengergame%3c%2fstring%3e%0d%0a++%3c%21--leaderboard+Rank--%3e%0d%0a++%3cstring+name%3d%22leaderboard_rank%22+translatable%3d%22false%22%3eCgkIltv9ip0ZEAIQBA%3c%2fstring%3e%0d%0a%3c%2fresources%3e
-and.ClientId=866801118614-pvvp6679fhvdvd8g4gkn7nlnnu6i0551.apps.googleusercontent.com
+proj.ConstantsClassName=GPGIds
+and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0d%0a%3c%21--Google+Play+game+services+IDs.+Save+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.--%3e%0d%0a%3cresources%3e%0d%0a++%3c%21--app_id--%3e%0d%0a++%3cstring+name%3d%22app_id%22+translatable%3d%22false%22%3e866801118614%3c%2fstring%3e%0d%0a++%3c%21--package_name--%3e%0d%0a++%3cstring+name%3d%22package_name%22+translatable%3d%22false%22%3ecom.hyperexit.challenger%3c%2fstring%3e%0d%0a++%3c%21--leaderboard+Rank--%3e%0d%0a++%3cstring+name%3d%22leaderboard_rank%22+translatable%3d%22false%22%3eCgkIltv9ip0ZEAIQBA%3c%2fstring%3e%0d%0a%3c%2fresources%3e
+and.ClientId=866801118614-i2u6c6kjtu0cl1ldgd58h1fk2vl10ija.apps.googleusercontent.com
 android.SetupDone=true
+App.NearbdServiceId=com.hyperexit.challenger
+android.NearbySetupDone=true

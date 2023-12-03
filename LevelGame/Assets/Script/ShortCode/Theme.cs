@@ -18,8 +18,23 @@ public class Theme : MonoBehaviour
     {
         if (parent.name == "Buy")
         {
-            PlayerPrefs.SetInt("Theme" + num, 1);
+            Buy();
+            //ShopScript.instance.NonConsumable_Press(Buy);
         }
+        else
+        {
+            Whear();
+        }
+    }
+
+    private void Buy()
+    {
+        PlayerPrefs.SetInt("Theme" + num, 1);
+        Whear();
+    }
+
+    private void Whear()
+    {
         PlayerPrefs.SetInt("Whear", num);
         ThemeManager.instance.ApplyChange();
     }

@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
     public GameObject[] particles;
     public void Awake()
     {
-        PlayerPrefs.DeleteAll();
         if (instance == null) instance = this;
         if (!PlayerPrefs.HasKey("Best"))
         {

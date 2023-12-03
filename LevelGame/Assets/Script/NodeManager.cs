@@ -1,3 +1,4 @@
+using GooglePlayGames;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,8 +33,9 @@ public class NodeManager : MonoBehaviour
             if (score > PlayerPrefs.GetInt("Best"))
             {
                 PlayerPrefs.SetInt("Best", score);
-                if (PlayerPrefs.HasKey("login")){
-                    GPGSBinder.Inst.ReportLeaderboard(LevelGame.leaderboard_rank, score);
+                if (Social.localUser.authenticated)
+                {
+                   GPGSBinder.Inst.ReportLeaderboard(GPGIds.leaderboard_rank, score);
                 }
             }
             RenewalText();
@@ -142,16 +144,14 @@ public class NodeManager : MonoBehaviour
     public IEnumerator GameOver()//°ÔÀÓ ³¡³²
     {
         yield return new WaitForSeconds(3);
-        if (((Score >= 450 && Random.value > 0.5f) || Score >= 700) && resurvive == false)
+        if (((Score >= 300 && Random.value > 0.5f) || Score >= 550) && resurvive == false)
         {
             resurvive = true;
             UIManager.instance.SurvivalUIIn();
         }
         else
         {
-            UIManager.instance.GameOverUIIn();
-            UIManager.instance.PlayUIOut();
-            resurvive = false;
+            OverSet();
         }
         GameManager.instance.canMove = false;
     }
@@ -207,11 +207,25 @@ public class NodeManager : MonoBehaviour
     }
     public void OnClickAd()//±¤°íº¸±â ´©¸£¸é
     {
+        if (PlayerPrefs.GetInt("Ad") == 1)
+        {
+            Debug.Log("¸®¿öµå ±¤°í");
+            //±¤°í ¶ç¿ò
+        }
+        else
+        {
+            Reservive();
+        }
+    }
+
+    private void Reservive()
+    {
         UIManager.instance.block[2].SetActive(true);
         UIManager.instance.SurvivalUIOut();
         AdBackground.minus = false;
         StartCoroutine(ReturnBlock());
     }
+
     private IEnumerator ReturnBlock()
     {
         while (EndCheck(true))
@@ -247,6 +261,17 @@ public class NodeManager : MonoBehaviour
     {
         AdBackground.minus = false;
         UIManager.instance.SurvivalUIOut();
+        OverSet();
+
+    }
+
+    private void OverSet()
+    {
+        if(Random.value < 0.334f)
+        {
+            Debug.Log("±¤°í³ª¿È");
+            //±¤°íÀç»ý
+        }
         UIManager.instance.GameOverUIIn();
         UIManager.instance.PlayUIOut();
         resurvive = false;

@@ -1,19 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
+using System.Threading.Tasks;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
-using GooglePlayGames.BasicApi.SavedGame;
 using GooglePlayGames.BasicApi.Events;
+using GooglePlayGames.BasicApi.SavedGame;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using UnityEngine;
 
-
-public class GPGSBinder
+public class GPGSBinder : MonoBehaviour
 {
     static GPGSBinder inst = new GPGSBinder();
     public static GPGSBinder Inst => inst;
 
-
+    
 
     ISavedGameClient SavedGame =>
         PlayGamesPlatform.Instance.SavedGame;
@@ -22,84 +24,21 @@ public class GPGSBinder
         PlayGamesPlatform.Instance.Events;
 
 
-
+    /*
     void Init()
     {
-        var config = new PlayGamesClientConfiguration.Builder().EnableSavedGames().Build();
-        PlayGamesPlatform.InitializeInstance(config);
-        PlayGamesPlatform.DebugLogEnabled = true;
         PlayGamesPlatform.Activate();
     }
 
 
-    public void Login(Action<bool, UnityEngine.SocialPlatforms.ILocalUser> onLoginSuccess = null)
+    public void Login()
     {
         Init();
-        PlayGamesPlatform.Instance.Authenticate(SignInInteractivity.CanPromptAlways, (success) =>
+        PlayGamesPlatform.Instance.Authenticate((success) =>
         {
-            onLoginSuccess?.Invoke(success == SignInStatus.Success, Social.localUser);
+            Debug.Log(success);
         });
-    }
-
-    public void Logout()
-    {
-        PlayGamesPlatform.Instance.SignOut();
-    }
-
-
-    public void SaveCloud(string fileName, string saveData, Action<bool> onCloudSaved = null)
-    {
-        SavedGame.OpenWithAutomaticConflictResolution(fileName, DataSource.ReadCacheOrNetwork,
-            ConflictResolutionStrategy.UseLastKnownGood, (status, game) =>
-            {
-                if (status == SavedGameRequestStatus.Success)
-                {
-                    var update = new SavedGameMetadataUpdate.Builder().Build();
-                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(saveData);
-                    SavedGame.CommitUpdate(game, update, bytes, (status2, game2) =>
-                    {
-                        onCloudSaved?.Invoke(status2 == SavedGameRequestStatus.Success);
-                    });
-                }
-            });
-    }
-
-    public void LoadCloud(string fileName, Action<bool, string> onCloudLoaded = null)
-    {
-        SavedGame.OpenWithAutomaticConflictResolution(fileName, DataSource.ReadCacheOrNetwork,
-            ConflictResolutionStrategy.UseLastKnownGood, (status, game) =>
-            {
-                if (status == SavedGameRequestStatus.Success)
-                {
-                    SavedGame.ReadBinaryData(game, (status2, loadedData) =>
-                    {
-                        if (status2 == SavedGameRequestStatus.Success)
-                        {
-                            string data = System.Text.Encoding.UTF8.GetString(loadedData);
-                            onCloudLoaded?.Invoke(true, data);
-                        }
-                        else
-                            onCloudLoaded?.Invoke(false, null);
-                    });
-                }
-            });
-    }
-
-    public void DeleteCloud(string fileName, Action<bool> onCloudDeleted = null)
-    {
-        SavedGame.OpenWithAutomaticConflictResolution(fileName,
-            DataSource.ReadCacheOrNetwork, ConflictResolutionStrategy.UseLongestPlaytime, (status, game) =>
-            {
-                if (status == SavedGameRequestStatus.Success)
-                {
-                    SavedGame.Delete(game);
-                    onCloudDeleted?.Invoke(true);
-                }
-                else
-                    onCloudDeleted?.Invoke(false);
-            });
-    }
-
+    }*/
 
     public void ShowAchievementUI() =>
         Social.ShowAchievementsUI();
@@ -153,7 +92,62 @@ public class GPGSBinder
             onEventsLoaded?.Invoke(status == ResponseStatus.Success, events);
         });
     }
+    public string GooglePlayToken;
+    public string GooglePlayError;
 
+    public async Task Authenticate()
+    {
+        PlayGamesPlatform.DebugLogEnabled = true;
+        PlayGamesPlatform.Activate();
+        await UnityServices.InitializeAsync();
+
+        PlayGamesPlatform.Instance.Authenticate((success) =>
+        {
+            if (success == SignInStatus.Success)
+            {
+                Debug.Log("Login with Google was successful.");
+                PlayGamesPlatform.Instance.RequestServerSideAccess(false, async code =>
+                {
+                    Debug.Log("Google Login Login with Google was successful.");
+                    GUIUtility.systemCopyBuffer = code;
+                    Debug.Log($"Auth code is {code}");
+                    GooglePlayToken = code;
+
+                    Debug.Log("Google Login 2" + " " + Social.localUser.id + " / " + Social.localUser.userName);
+
+                    await AuthenticateWithUnity();
+                });
+            }
+            else
+            {
+                GooglePlayError = "Failed to retrieve GPG auth code";
+                Debug.Log("Google Login" + "Failed to retrieve GPG auth code");
+                Debug.LogError("Login Unsuccessful");
+            }
+        });
+    }
+
+    private async Task AuthenticateWithUnity()
+    {
+        try
+        {
+            await AuthenticationService.Instance.SignInWithGoogleAsync(GooglePlayToken);
+        }
+        catch (AuthenticationException ex)
+        {
+            Debug.LogException(ex);
+            throw;
+        }
+        catch (RequestFailedException ex)
+        {
+            Debug.LogException(ex);
+            throw;
+        }
+
+    }
+
+    private void Start()
+    {
+        _ = Authenticate();
+    }
 }
-
-
