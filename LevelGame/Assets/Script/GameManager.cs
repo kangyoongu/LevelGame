@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
         {
             PlayerPrefs.SetInt("Best", 0);
         }
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 90;
     }
     void Update()
     {

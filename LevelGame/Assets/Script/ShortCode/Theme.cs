@@ -18,8 +18,8 @@ public class Theme : MonoBehaviour
     {
         if (parent.name == "Buy")
         {
-            Buy();
-            //ShopScript.instance.NonConsumable_Press(Buy);
+            //Buy();
+            ShopScript.instance.NonConsumable_Press(Buy);
         }
         else
         {

@@ -6,7 +6,6 @@ using System;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Audio;
-using GooglePlayGames;
 
 public enum Dir : short
 {
@@ -54,7 +53,7 @@ public class UIManager : MonoBehaviour
     public GameObject ad;
     private void Awake()
     {
-        PlayerPrefs.DeleteAll();
+        //PlayerPrefs.DeleteAll();
         if (instance == null) instance = this;
         if (!PlayerPrefs.HasKey("Sound"))
         {
@@ -251,18 +250,6 @@ public class UIManager : MonoBehaviour
             mixer.SetFloat("SFX", -80f);
         }
     }
-    public void OnClickRank()
-    {
-        if (PlayGamesPlatform.Instance.localUser.authenticated == false)
-        {
-            _ = GPGSBinder.Inst.Authenticate();
-        }
-        else
-        {
-            GPGSBinder.Inst.ReportLeaderboard(GPGIds.leaderboard_rank, PlayerPrefs.GetInt("Best"));
-            GPGSBinder.Inst.ShowTargetLeaderboardUI(GPGIds.leaderboard_rank);
-        }
-    }
     public void OnClickRemoveAd()
     {
         ShopScript.instance.NonConsumableRemoveAd_Press(RemoveAd);
@@ -271,6 +258,7 @@ public class UIManager : MonoBehaviour
     private void RemoveAd()
     {
         PlayerPrefs.SetInt("Ad", 0);
+        AdmobAdsScript.instance.DestroyBannerAd();
         ad.SetActive(false);
     }
 }

@@ -1,4 +1,3 @@
-using GooglePlayGames;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,10 +32,6 @@ public class NodeManager : MonoBehaviour
             if (score > PlayerPrefs.GetInt("Best"))
             {
                 PlayerPrefs.SetInt("Best", score);
-                if (Social.localUser.authenticated)
-                {
-                   GPGSBinder.Inst.ReportLeaderboard(GPGIds.leaderboard_rank, score);
-                }
             }
             RenewalText();
         }
@@ -210,7 +205,7 @@ public class NodeManager : MonoBehaviour
         if (PlayerPrefs.GetInt("Ad") == 1)
         {
             Debug.Log("¸®¿öµå ±¤°í");
-            //±¤°í ¶ç¿ò
+            AdmobAdsScript.instance.ShowRewardedAd(Reservive);
         }
         else
         {
@@ -218,7 +213,7 @@ public class NodeManager : MonoBehaviour
         }
     }
 
-    private void Reservive()
+    private void Reservive()//»ì¸®±â
     {
         UIManager.instance.block[2].SetActive(true);
         UIManager.instance.SurvivalUIOut();
@@ -267,10 +262,10 @@ public class NodeManager : MonoBehaviour
 
     private void OverSet()
     {
-        if(Random.value < 0.334f)
+        if(Random.value < 0.333f && PlayerPrefs.GetInt("Ad") == 1)
         {
             Debug.Log("±¤°í³ª¿È");
-            //±¤°íÀç»ý
+            AdmobAdsScript.instance.ShowInterAd();
         }
         UIManager.instance.GameOverUIIn();
         UIManager.instance.PlayUIOut();
