@@ -262,7 +262,7 @@ public class NodeManager : MonoBehaviour
 
     private void OverSet()
     {
-        if(Random.value < 0.333f && PlayerPrefs.GetInt("Ad") == 1)
+        if(Random.value < 0.33333f && PlayerPrefs.GetInt("Ad") == 1)
         {
             Debug.Log("±¤°í³ª¿È");
             AdmobAdsScript.instance.ShowInterAd();

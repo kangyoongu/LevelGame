@@ -76,6 +76,6 @@ public class ShopScript : MonoBehaviour, IStoreListener
 
     public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
     {
-        Debug.Log("Failed");
+        Debug.Log("Failed" + "  " + failureReason);
     }
 }

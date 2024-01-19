@@ -8,15 +8,15 @@ public class AdmobAdsScript : MonoBehaviour
 {
     public static AdmobAdsScript instance;
 
-    public string appId = "ca-app-pub-3940256099942544~3347511713";
+    public string appId = "ca-app-pub-3810540480924128~5746916628";
 
     string testbannerId = "ca-app-pub-3940256099942544/6300978111";
     string testinterId = "ca-app-pub-3940256099942544/1033173712";
     string testrewardedId = "ca-app-pub-3940256099942544/5224354917";
 
-    string bannerId = "";
-    string interId = "";
-    string rewardedId = "";
+    string bannerId = "ca-app-pub-3810540480924128/2781954276";
+    string interId = "ca-app-pub-3810540480924128/2932379540";
+    string rewardedId = "ca-app-pub-3810540480924128/3661602313";
 
     [SerializeField] bool isTest = true;
 
@@ -39,10 +39,8 @@ public class AdmobAdsScript : MonoBehaviour
         {
             LoadBannerAd();
         }
-        //LoadInterAd();
+        LoadInterAd();
         LoadRewardedAd();
-       // ShowInterAd();
-
     }
 
     public void LoadBannerAd()
@@ -144,7 +142,6 @@ public class AdmobAdsScript : MonoBehaviour
     }
     public void ShowInterAd()
     {
-        LoadInterAd();
         if(interstitialAd != null && interstitialAd.CanShowAd())
         {
             interstitialAd.Show();
@@ -180,6 +177,7 @@ public class AdmobAdsScript : MonoBehaviour
         interstitialAd.OnAdFullScreenContentClosed += () =>
         {
             Debug.Log("Interstitial ad full screen content closed.");
+            LoadInterAd();
         };
         // Raised when the ad failed to open full screen content.
         interstitialAd.OnAdFullScreenContentFailed += (AdError error) =>
@@ -214,7 +212,7 @@ public class AdmobAdsScript : MonoBehaviour
     }
     public void ShowRewardedAd(Action func)
     {
-        if(rewardedAd != null && rewardedAd.CanShowAd())
+        if (rewardedAd != null && rewardedAd.CanShowAd())
         {
             rewardedAd.Show((Reward reward) =>
             {
@@ -227,7 +225,6 @@ public class AdmobAdsScript : MonoBehaviour
         {
             print("Rewarded ad not ready");
         }
-        LoadRewardedAd();
     }
     public void RewardedAdEvents(RewardedAd ad)
     {
@@ -255,6 +252,7 @@ public class AdmobAdsScript : MonoBehaviour
         ad.OnAdFullScreenContentClosed += () =>
         {
             Debug.Log("Rewarded interstitial ad full screen content closed.");
+            LoadRewardedAd();
         };
         // Raised when the ad failed to open full screen content.
         ad.OnAdFullScreenContentFailed += (AdError error) =>

@@ -3195,18 +3195,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: NodeManager, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &384839502
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7884,8 +7872,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8d9dc52a229bea4a9c5f1068984a7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  appId: ca-app-pub-3940256099942544~3347511713
-  isTest: 1
+  appId: ca-app-pub-3810540480924128~5746916628
+  isTest: 0
 --- !u!1 &1067760529
 GameObject:
   m_ObjectHideFlags: 0
@@ -18872,7 +18860,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ncItem:
   - Name: Cheap Theme
-    Id: cheap_theme
+    Id: cheap_theme2
   - Name: Remove Ad
     Id: remove_ad
 --- !u!4 &1732131381
