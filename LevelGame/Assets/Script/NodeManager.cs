@@ -5,9 +5,8 @@ using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class NodeManager : MonoBehaviour
+public class NodeManager : SingleTon<NodeManager>
 {
-    public static NodeManager instance;
     public NodeInfo[] fullNodes;
     public List<NodeInfo> blankNode = new List<NodeInfo>();
     public GameObject visual;
@@ -36,11 +35,6 @@ public class NodeManager : MonoBehaviour
             RenewalText();
         }
     }
-    private void Awake()
-    {
-        if (instance == null) instance = this;
-    }
-
     private void Start()
     {
         RenewalText();
@@ -57,14 +51,25 @@ public class NodeManager : MonoBehaviour
     void MakeVisual(NodeInfo node, int num)
     {
         node.num = num;
-        Instantiate(visual, node.transform.position, node.transform.rotation, node.transform).GetComponent<VisualMove>().SetColor();
+        Instantiate(visual, node.transform.position + new Vector3(0f, 0.1144f, 0f), node.transform.rotation, node.transform).GetComponent<VisualMove>().SetColor();
         blankNode.Remove(node);
         makeSound.JustPlay();
     }
-    public void MakeNode()
+    IEnumerator MakeVisual(NodeInfo node, int num, float delay)
+    {
+        node.num = num;
+        blankNode.Remove(node);
+        yield return new WaitForSeconds(delay);
+        Instantiate(visual, node.transform.position + new Vector3(0f, 0.1144f, 0f), node.transform.rotation, node.transform).GetComponent<VisualMove>().SetColor();
+        makeSound.JustPlay();
+    }
+    public void MakeNode(float visualDelay = 0)
     {
         int index = Random.Range(0, blankNode.Count);
-        MakeVisual(blankNode[index], Random.Range(1, 4));
+        if (visualDelay == 0f)
+            MakeVisual(blankNode[index], Random.Range(1, 4));
+        else
+            StartCoroutine(MakeVisual(blankNode[index], Random.Range(1, 4), visualDelay));
     }
 
     public bool EndCheck(bool chance)//게임이 끝났는지 체크
@@ -139,7 +144,7 @@ public class NodeManager : MonoBehaviour
     public IEnumerator GameOver()//게임 끝남
     {
         yield return new WaitForSeconds(3);
-        if (((Score >= 300 && Random.value > 0.5f) || Score >= 550) && resurvive == false)
+        if (((Score >= 250 && Random.value > 0.5f) || Score >= 450) && resurvive == false)
         {
             resurvive = true;
             UIManager.instance.SurvivalUIIn();
@@ -148,7 +153,7 @@ public class NodeManager : MonoBehaviour
         {
             OverSet();
         }
-        GameManager.instance.canMove = false;
+        GameManager.Instance.canMove = false;
     }
     public void OnClickStart()//메인화면에서 시작버튼 누르면
     {
@@ -159,7 +164,7 @@ public class NodeManager : MonoBehaviour
     public IEnumerator StartWork()//시작할 때 할 일들
     {
         Score = 0;
-        GameManager.instance.max = 5;
+        GameManager.Instance.max = 5;
         resurvive = false;
         List<NodeInfo> list = new List<NodeInfo>(fullNodes);
         blankNode = new List<NodeInfo>(fullNodes);
@@ -172,7 +177,7 @@ public class NodeManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         EndCheck(false);
         yield return new WaitForSeconds(0.6f);
-        GameManager.instance.canMove = true;
+        GameManager.Instance.canMove = true;
         UIManager.instance.block[1].SetActive(false);
     }
     public void PopSoundPlay()
@@ -185,7 +190,7 @@ public class NodeManager : MonoBehaviour
         for (int i = 0; i < fullNodes.Length; i++)
         {
             fullNodes[i].num = 0;
-            if (!blankNode.Contains(fullNodes[i]))
+            if (!blankNode.Contains(fullNodes[i]) && fullNodes[i].visualmove!= null)
             {
                 StartCoroutine(fullNodes[i].visualmove.Disapear());
             }
@@ -202,7 +207,7 @@ public class NodeManager : MonoBehaviour
     }
     public void OnClickAd()//광고보기 누르면
     {
-        if (PlayerPrefs.GetInt("Ad") == 1)
+        /*if (PlayerPrefs.GetInt("Ad") == 1)
         {
             Debug.Log("리워드 광고");
             AdmobAdsScript.instance.ShowRewardedAd(Reservive);
@@ -210,7 +215,8 @@ public class NodeManager : MonoBehaviour
         else
         {
             Reservive();
-        }
+        }*/
+        Reservive();
     }
 
     private void Reservive()//살리기
@@ -250,7 +256,7 @@ public class NodeManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
         UIManager.instance.block[2].SetActive(false);
-        GameManager.instance.canMove = true;
+        GameManager.Instance.canMove = true;
     }
     public void OnClickDone()//끝내기 누르면
     {
@@ -262,11 +268,11 @@ public class NodeManager : MonoBehaviour
 
     private void OverSet()
     {
-        if(Random.value < 0.33333f && PlayerPrefs.GetInt("Ad") == 1)
+        /*if(Random.value < 0.33333f && PlayerPrefs.GetInt("Ad") == 1)
         {
             Debug.Log("광고나옴");
             AdmobAdsScript.instance.ShowInterAd();
-        }
+        }*/
         UIManager.instance.GameOverUIIn();
         UIManager.instance.PlayUIOut();
         resurvive = false;

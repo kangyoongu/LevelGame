@@ -4,13 +4,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class GameManager : MonoBehaviour
+public class GameManager : SingleTon<GameManager>
 {
-    public static GameManager instance;
     public Camera mainCamera;
 
     bool click = false;
-    List<NodeInfo> connects = new List<NodeInfo>();
+    List<NodeInfo> connects = new List<NodeInfo>();//드래그하면서 연결한 모든 애들
     [HideInInspector] public bool onOtherNode = true;
     [HideInInspector] public bool canMove = false;
     public int max = 5;
@@ -18,7 +17,6 @@ public class GameManager : MonoBehaviour
     public GameObject[] particles;
     public void Awake()
     {
-        if (instance == null) instance = this;
         if (!PlayerPrefs.HasKey("Best"))
         {
             PlayerPrefs.SetInt("Best", 0);
@@ -40,7 +38,7 @@ public class GameManager : MonoBehaviour
             {
                 if (connects[0].num == 10)
                 {
-                    foreach (NodeInfo node in NodeManager.instance.fullNodes)
+                    foreach (NodeInfo node in NodeManager.Instance.fullNodes)
                     {
                         if (node.num == 10)
                         {
@@ -52,7 +50,7 @@ public class GameManager : MonoBehaviour
                 {
                     foreach (NodeInfo node in connects[0].neighbor)
                     {
-                        if (node.num == connects[0].num)
+                        if (node.num == connects[0].num && node.visualmove != null)
                         {
                             node.visualmove.warning.SetActive(false);
                         }
@@ -63,7 +61,7 @@ public class GameManager : MonoBehaviour
                 {
                     connects[0].num = 0;
                     connects[connects.Count - 1].num++;
-                    NodeManager.instance.Score += connects[connects.Count - 1].num;
+                    NodeManager.Instance.Score += connects[connects.Count - 1].num;
                     if (connects[connects.Count - 1].num > max)//최고기록 갱신하면 하나 더 나옴
                     {
                         max = connects[connects.Count - 1].num;
@@ -92,12 +90,11 @@ public class GameManager : MonoBehaviour
     {
         Touch touch = Input.GetTouch(0); // 첫 번째 터치 입력 사용
 
-        Vector2 touchPosition = mainCamera.ScreenToWorldPoint(touch.position);
+        Ray touchRay = mainCamera.ScreenPointToRay(touch.position);
 
         // Raycast를 사용하여 터치 위치에서 스프라이트를 선택
-        RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero);
-
-        if (hit.collider != null)//뭔갈 눌렀으면 
+        RaycastHit hit;
+        if (Physics.Raycast(touchRay, out hit))//뭔갈 눌렀으면 
         {
             GameObject selectedSprite = hit.collider.gameObject;//가져오고
             if (selectedSprite.CompareTag("Node")) //태그가 node면
@@ -106,14 +103,14 @@ public class GameManager : MonoBehaviour
 
                 if (touch.phase == TouchPhase.Began)//첫클릭이면
                 {
-                    if (clicked.num >= 1)//node 숫자가 1이상이면
+                    if (clicked.num >= 1 && clicked.visualmove != null)//node 숫자가 1이상이면(그 자리에 뭐가 있으면)
                     {
-                        if (connects.Count > 0 && connects[0].visualmove != null)
+                        if (connects.Count > 0 && connects[0].num > 0 && connects[0].visualmove != null)//뭔가 막 버그가 나는걸 막아줌 
                         {
                             connects[0].visualmove.ToReset();
                             foreach (NodeInfo node in connects[0].neighbor)
                             {
-                                if (node.num == connects[0].num)
+                                if (node.num == connects[0].num && node.visualmove != null)
                                 {
                                     node.visualmove.warning.SetActive(false);
                                 }
@@ -121,11 +118,11 @@ public class GameManager : MonoBehaviour
                         }
                         connects = new List<NodeInfo>();
                         connects.Add(clicked);
-                        connects[0].visualmove.AddPosition(clicked.transform.position);
+                        connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
                         click = true;
                         if (connects[0].num == 10)
                         {
-                            foreach (NodeInfo node in NodeManager.instance.fullNodes)
+                            foreach (NodeInfo node in NodeManager.Instance.fullNodes)
                             {
                                 if (node.num == 10 && node != clicked)
                                 {
@@ -135,11 +132,11 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            if (connects.Count > 0 && connects[0].visualmove != null)
+                            if (connects.Count > 0 && connects[0].num > 0)
                             {
                                 foreach (NodeInfo node in connects[0].neighbor)
                                 {
-                                    if (node.num == connects[0].num)
+                                    if (node.num == connects[0].num && node.visualmove != null)
                                     {
                                         node.visualmove.warning.SetActive(true);
                                     }
@@ -168,12 +165,12 @@ public class GameManager : MonoBehaviour
                             if (clicked.num <= 0)
                             {
                                 connects.Add(clicked);
-                                connects[0].visualmove.AddPosition(clicked.transform.position);
+                                connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
                             }
-                            else if (clicked.num == connects[0].num && !connects[0].neighbor.Contains(clicked) && connects[0].num < 10)//이웃은 안합쳐지게
+                            else if (clicked.num == connects[0].num && !connects[0].neighbor.Contains(clicked) && connects[0].num < 10 && clicked.visualmove != null)//이웃은 안합쳐지게
                             {
                                 connects.Add(clicked);
-                                connects[0].visualmove.AddPosition(clicked.transform.position);
+                                connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
                                 onOtherNode = false;
                             }
                         }

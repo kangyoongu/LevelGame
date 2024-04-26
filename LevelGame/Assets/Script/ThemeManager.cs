@@ -54,18 +54,25 @@ public class ThemeManager : MonoBehaviour
     {
         for (int i = 0; i < buys.Length; i++)
         {
-            if (PlayerPrefs.GetInt("Theme" + i) == 0)
+            /*if (PlayerPrefs.GetInt("Theme" + i) == 0)
             {
                 buys[i].SetParent(sell);
                 buys[i].SetAsLastSibling();
+                buys[i].GetChild(0).GetChild(1).gameObject.SetActive(true);
             }
             else
             {
                 buys[i].SetParent(get);
                 buys[i].SetAsLastSibling();
                 buys[i].GetChild(0).GetChild(1).gameObject.SetActive(false);
+            }*/
+            if (i > 0)
+            {
+                buys[i].SetParent(sell);
+                buys[i].SetAsLastSibling();
             }
-            if(PlayerPrefs.GetInt("Whear") == i)
+            buys[i].GetChild(0).GetChild(1).gameObject.SetActive(false);//원래 주석
+            if (PlayerPrefs.GetInt("Whear") == i)
             {
                 buys[i].GetChild(0).GetChild(0).gameObject.SetActive(true);
                 ApplyTheme(everyTheme[i]);
@@ -80,12 +87,12 @@ public class ThemeManager : MonoBehaviour
     public void ApplyTheme(ThemeData theme)
     {
         background.backgroundColor = theme.backgroundColor;
-        NodeManager.instance.nodeColor = theme.blockColor;
-        NodeManager.instance.inside = theme.blockSprite;
-        NodeManager.instance.warningColor = theme.warning;
+        NodeManager.Instance.nodeColor = theme.blockColor;
+        NodeManager.Instance.inside = theme.blockSprite;
+        NodeManager.Instance.warningColor = theme.warning;
 
 
-        foreach(NodeInfo node in NodeManager.instance.fullNodes)
+        foreach(NodeInfo node in NodeManager.Instance.fullNodes)
         {
             if(node.visualmove != null)
             {
@@ -151,6 +158,6 @@ public class ThemeManager : MonoBehaviour
         {
             image.color = theme.ad;
         }
-        heart[1].color = new Color(heart[1].color.r, heart[1].color.g, heart[1].color.b, 1);
+        //heart[1].color = new Color(heart[1].color.r, heart[1].color.g, heart[1].color.b, 1);
     }
 }

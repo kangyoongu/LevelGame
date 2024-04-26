@@ -1,4 +1,4 @@
-using System.Collections;
+/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GoogleMobileAds.Api;
@@ -8,15 +8,15 @@ public class AdmobAdsScript : MonoBehaviour
 {
     public static AdmobAdsScript instance;
 
-    public string appId = "ca-app-pub-3810540480924128~5746916628";
+    public string appId = "ca-app-pub-3810540480924128~9396032308";
 
     string testbannerId = "ca-app-pub-3940256099942544/6300978111";
     string testinterId = "ca-app-pub-3940256099942544/1033173712";
     string testrewardedId = "ca-app-pub-3940256099942544/5224354917";
 
-    string bannerId = "ca-app-pub-3810540480924128/2781954276";
-    string interId = "ca-app-pub-3810540480924128/2932379540";
-    string rewardedId = "ca-app-pub-3810540480924128/3661602313";
+    string bannerId = "ca-app-pub-3810540480924128/8310977508";
+    string interId = "ca-app-pub-3810540480924128/6997895835";
+    string rewardedId = "ca-app-pub-3810540480924128/5712734329";
 
     [SerializeField] bool isTest = true;
 
@@ -262,3 +262,4 @@ public class AdmobAdsScript : MonoBehaviour
         };
     }
 }
+*/

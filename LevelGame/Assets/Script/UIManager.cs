@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
     public static UIManager instance;
     bool digree = false;
     public RectTransform digreePack;
-    public Transform cam;
+    //public Transform cam;
 
     public Sprite[] mute;
     public Image muteImage;
@@ -66,7 +66,7 @@ public class UIManager : MonoBehaviour
     }
     private void Start()
     {
-        if (PlayerPrefs.GetInt("Ad") == 0) ad.SetActive(false);
+        //if (PlayerPrefs.GetInt("Ad") == 0) ad.SetActive(false);
         MuteCheck();
     }
     public void GameOverUIIn()
@@ -82,13 +82,13 @@ public class UIManager : MonoBehaviour
     public void MainUIIn()
     {
         mainSound.Play();
-        cam.DOMoveY(-1.45f, 0.5f);
+        //cam.DOMoveY(-1.45f, 0.5f);
         In(mainUI);
     }
 
     public void MainUIOut()
     {
-        cam.DOMoveY(0, 0.5f);
+        //cam.DOMoveY(0, 0.5f);
         Out(mainUI);
     }
     public void PlayUIIn()
@@ -215,21 +215,21 @@ public class UIManager : MonoBehaviour
     {
         GameOverUIOut();
         MenuUIOut();
-        NodeManager.instance.RemoveVisual();
-        StartCoroutine(NodeManager.instance.GoToMain());
+        NodeManager.Instance.RemoveVisual();
+        StartCoroutine(NodeManager.Instance.GoToMain());
     }
     public void OnClickAgain()//다시하기 누르면
     {
         GameOverUIOut();
         MenuUIOut();
-        NodeManager.instance.RemoveVisual();
+        NodeManager.Instance.RemoveVisual();
         StartCoroutine(AgainDelay());
     }
     IEnumerator AgainDelay()
     {
         yield return new WaitForSeconds(2f);
         PlayUIIn();
-        StartCoroutine(NodeManager.instance.StartWork());
+        StartCoroutine(NodeManager.Instance.StartWork());
     }
     public void OnClickMute()
     {
@@ -250,7 +250,7 @@ public class UIManager : MonoBehaviour
             mixer.SetFloat("SFX", -80f);
         }
     }
-    public void OnClickRemoveAd()
+    /*public void OnClickRemoveAd()
     {
         ShopScript.instance.NonConsumableRemoveAd_Press(RemoveAd);
     }
@@ -260,5 +260,5 @@ public class UIManager : MonoBehaviour
         PlayerPrefs.SetInt("Ad", 0);
         AdmobAdsScript.instance.DestroyBannerAd();
         ad.SetActive(false);
-    }
+    }*/
 }

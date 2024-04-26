@@ -12,7 +12,7 @@ public class NodeInfo : MonoBehaviour
 
     private void Update()
     {
-        if(num >= 1)
+        if(num >= 1 && transform.childCount > 0)
         {
             if(visualmove == null)visualmove = transform.GetChild(0).GetComponent<VisualMove>();
         }

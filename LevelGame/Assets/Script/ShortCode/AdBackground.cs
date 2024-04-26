@@ -20,7 +20,7 @@ public class AdBackground : MonoBehaviour
             bar.fillAmount -= Time.deltaTime * 0.13f;
             if (bar.fillAmount == 0)
             {
-                NodeManager.instance.OnClickDone();
+                NodeManager.Instance.OnClickDone();
                 minus = false;
             }
         }
