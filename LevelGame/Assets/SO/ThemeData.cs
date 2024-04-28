@@ -6,7 +6,7 @@ using UnityEngine;
 public class ThemeData : ScriptableObject
 {
     public Color[] blockColor;
-    public Sprite[] blockSprite;
+    public Material material;
     public Color backgroundColor;
     public Color blankColor;
     public Color play;

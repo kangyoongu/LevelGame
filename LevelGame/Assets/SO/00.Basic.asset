@@ -23,17 +23,7 @@ MonoBehaviour:
   - {r: 0.13333334, g: 0.6, b: 0.32941177, a: 1}
   - {r: 0.54509807, g: 0.30980393, b: 0.6431373, a: 1}
   - {r: 0.9245283, g: 0.26599056, b: 0.19769777, a: 1}
-  blockSprite:
-  - {fileID: 21300000, guid: 8cb1aee17298f664c870e9a42a893fdd, type: 3}
-  - {fileID: 21300000, guid: 05eb5d4a2ef38714c846efe2a4cc0aa6, type: 3}
-  - {fileID: 21300000, guid: 061dce4208c84bf42a532218b95d1ae6, type: 3}
-  - {fileID: 21300000, guid: 3bf832a69813f5f43a8b45ebe5873570, type: 3}
-  - {fileID: 21300000, guid: bdd9702823d106643be3b4a245820fd0, type: 3}
-  - {fileID: 21300000, guid: e9881d01e039bef4e96f87a0304593e2, type: 3}
-  - {fileID: 21300000, guid: 60eeaa960e863534c8ab51c0e65108f5, type: 3}
-  - {fileID: 21300000, guid: 0180a365dede877438583a95dff06b58, type: 3}
-  - {fileID: 21300000, guid: 1659a74583ea0fe45a62f28f6152bdd6, type: 3}
-  - {fileID: 21300000, guid: a1999bee02f64a44fb5488b6a26c4bac, type: 3}
+  material: {fileID: 2100000, guid: a22215128da9c7d4ca8b4b8e93b58f04, type: 2}
   backgroundColor: {r: 0.9607844, g: 0.9607844, b: 0.86274517, a: 1}
   blankColor: {r: 0.65882355, g: 0.6392157, b: 0.6039216, a: 1}
   play: {r: 0.98823535, g: 0.7372549, b: 0.2509804, a: 1}

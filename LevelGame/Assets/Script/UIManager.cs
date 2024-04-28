@@ -32,6 +32,8 @@ public class UIManager : MonoBehaviour
     public UI[] survivalUI;
     public UI[] themeUI;
     public UI[] menuUI;
+    public UI[] stageUI;
+    public UI[] selectModeUI;
 
     public static UIManager instance;
     bool digree = false;
@@ -124,6 +126,22 @@ public class UIManager : MonoBehaviour
     public void MenuUIOut()
     {
         Out(menuUI);
+    }
+    public void StageUIIn()
+    {
+        In(stageUI);
+    }
+    public void StageUIOut()
+    {
+        Out(stageUI);
+    }
+    public void SelectModeUIIn()
+    {
+        In(selectModeUI);
+    }
+    public void SelectModeUIOut()
+    {
+        Out(selectModeUI);
     }
     private void In(UI[] lst)
     {

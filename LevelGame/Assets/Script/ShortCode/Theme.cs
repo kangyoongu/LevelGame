@@ -36,6 +36,6 @@ public class Theme : MonoBehaviour
     private void Whear()
     {
         PlayerPrefs.SetInt("Whear", num);
-        ThemeManager.instance.ApplyChange();
+        ThemeManager.Instance.ApplyChange();
     }
 }

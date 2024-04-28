@@ -4,9 +4,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ThemeManager : MonoBehaviour
+public class ThemeManager : SingleTon<ThemeManager>
 {
-    public static ThemeManager instance;
     public Camera background;
     public SpriteRenderer[] blanks;
     public Image[] play;
@@ -31,7 +30,6 @@ public class ThemeManager : MonoBehaviour
     public Transform sell;
     private void Start()
     {
-        if (instance == null) instance = this;
         if (!PlayerPrefs.HasKey("Whear"))
         {
             PlayerPrefs.SetInt("Whear", 0);
@@ -88,7 +86,7 @@ public class ThemeManager : MonoBehaviour
     {
         background.backgroundColor = theme.backgroundColor;
         NodeManager.Instance.nodeColor = theme.blockColor;
-        NodeManager.Instance.inside = theme.blockSprite;
+        NodeManager.Instance.currentMat = theme.material;
         NodeManager.Instance.warningColor = theme.warning;
 
 
@@ -100,21 +98,21 @@ public class ThemeManager : MonoBehaviour
             }
         }
 
-        for(int i = 0; i < pedigree.Length; i++)
+       /* for(int i = 0; i < pedigree.Length; i++)
         {
             pedigree[i].color = theme.blockColor[i];
-            pedigree[i].transform.GetChild(0).GetComponent<Image>().sprite = theme.blockSprite[i];
+            pedigree[i].transform.GetChild(0).GetComponent<MeshRenderer>().material = theme.material;
         }
         for(int i = 0; i < pedigreeIcon.Length; i++)
         {
             pedigreeIcon[i].color = theme.blockColor[i+1];
-            pedigreeIcon[i].transform.GetChild(0).GetComponent<Image>().sprite = theme.blockSprite[i+1];
-        }
+            pedigreeIcon[i].transform.GetChild(0).GetComponent<MeshRenderer>().material = theme.material;
+        }*/
 
-        foreach(SpriteRenderer sr in blanks)
+       /* foreach(SpriteRenderer sr in blanks)
         {
             sr.color = theme.blankColor;
-        }
+        }*/
         foreach(Image image in play)
         {
             image.color = theme.play;

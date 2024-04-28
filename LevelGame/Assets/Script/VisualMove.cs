@@ -27,12 +27,16 @@ public class VisualMove : MonoBehaviour
     private void Start()
     {
         transform.localScale = Vector3.zero;
-        transform.DOScale(new Vector3(1.2f, 0.8f, 1f), 0.3f).SetEase(Ease.OutBack);
-        transform.DOScale(Vector3.one, 0.7f).SetEase(Ease.OutElastic).SetDelay(0.3f);
+        transform.DOScale(new Vector3(1.2f, 0.8f, -1f), 0.3f).SetEase(Ease.OutBack);
+        transform.DOScale(new Vector3(1f, 1f, -1f), 0.7f).SetEase(Ease.OutElastic).SetDelay(0.3f);
         lineRenderer.positionCount = 0; // 포인트 개수 설정 (시작점과 끝점)
     }
     public void SetColor()//자신 칸의 값에 따라 색 바꿈
     {
+        if (meshRenderer.material != NodeManager.Instance.currentMat)
+        {
+            meshRenderer.material = NodeManager.Instance.currentMat;
+        }
         NodeInfo parentNodeInfo = transform.parent.GetComponent<NodeInfo>();
         value = parentNodeInfo.num;
         //transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = NodeManager.instance.inside[value - 1];
@@ -49,7 +53,7 @@ public class VisualMove : MonoBehaviour
         // 변경된 그라디언트를 재질에 적용
         lineRenderer.colorGradient = gradient;
     }
-    public IEnumerator Move(VisualMove target, int makeNum)//합치면 그 위치로 움직임
+    public IEnumerator Move(VisualMove target, int makeNum, int makeLevel)//합치면 그 위치로 움직임
     {
         RandomPitchPlay rand = GetComponent<RandomPitchPlay>();
         rand.Play(clips);
@@ -69,6 +73,8 @@ public class VisualMove : MonoBehaviour
                 yield return new WaitForSeconds(speed * 0.65f);
             }
         }
+
+        #region 쫄깃한 애니메이션
         Vector3 dir = transform.position - positions[positions.Count - 1];
         float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
         if (angle < 0)
@@ -80,31 +86,37 @@ public class VisualMove : MonoBehaviour
         transform.localRotation = Quaternion.Euler(0, 0, angle * -60);
         target.transform.localRotation = Quaternion.Euler(0, 0, angle * -60);
         transform.DOMove(positions[positions.Count - 1] + transform.right * 0.25f, 0.6f).SetEase(Ease.OutQuad);
-        transform.DOScale(new Vector3(0.7f, 1.1f, 1f), 0.6f).SetEase(Ease.OutQuad);
+        transform.DOScale(new Vector3(0.7f, 1.1f, -1f), 0.6f).SetEase(Ease.OutQuad);
         Vector3 targetPos = target.transform.position;
         target.transform.DOMove(target.transform.position + target.transform.right * -0.3f, 0.6f).SetEase(Ease.OutQuad);
-        target.transform.DOScale(new Vector3(0.7f, 1.1f, 1f), 0.6f).SetEase(Ease.OutQuad);
+        target.transform.DOScale(new Vector3(0.7f, 1.1f, -1f), 0.6f).SetEase(Ease.OutQuad);
         yield return new WaitForSeconds(0.6f * 0.27f);
         lineRenderer.positionCount = 0;
         yield return new WaitForSeconds(0.6f * 0.73f);
         target.transform.position = targetPos;
-        target.transform.localScale = new Vector3(1.2f, 1f, 1f);
-        target.transform.DOScale(new Vector3(1.5f, 1.1f, 1f), 0.1f).SetEase(Ease.OutCubic);
-        target.transform.DOScale(new Vector3(0.8f, 1.3f, 1f), 0.1f).SetEase(Ease.OutCubic).SetDelay(0.1f);
-        target.transform.DOScale(Vector3.one, 0.6f).SetEase(Ease.OutElastic).SetDelay(0.2f);
+        target.transform.localScale = new Vector3(1.2f, 1f, -1f);
+        target.transform.DOScale(new Vector3(1.5f, 1.1f, -1f), 0.1f).SetEase(Ease.OutCubic);
+        target.transform.DOScale(new Vector3(0.8f, 1.3f, -1f), 0.1f).SetEase(Ease.OutCubic).SetDelay(0.1f);
+        target.transform.DOScale(new Vector3(1f, 1f, -1f), 0.6f).SetEase(Ease.OutElastic).SetDelay(0.2f);
         particle.transform.parent = null;
         particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         ToReset();
+        #endregion
+
         target.SetColor();
         target.bombParticle.startColor = NodeManager.Instance.nodeColor[value];
         target.bombParticle.Play();
+        if (GameManager.Instance.stage)
+        {
+             NodeManager.Instance.CheckClear();
+        }
         NodeManager.Instance.blankNode.Add(GetComponentInParent<NodeInfo>());
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         PublicAudio.Instance.merge.Play();
-        float spawnDelay = 5f;
+        float spawnDelay = 0.5f;
         for (int i = 0; i < makeNum; i++)
         {
-            NodeManager.Instance.MakeNode(spawnDelay);
+            NodeManager.Instance.MakeNode(spawnDelay, makeLevel);
         }
         yield return new WaitForEndOfFrame();
         NodeManager.Instance.EndCheck(false);

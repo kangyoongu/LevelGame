@@ -12,7 +12,7 @@ public class NodeManager : SingleTon<NodeManager>
     public GameObject visual;
 
     public Color[] nodeColor;
-    public Sprite[] inside;
+    [HideInInspector]public Material currentMat;
     public TextMeshProUGUI[] bestText;
     public TextMeshProUGUI[] currentText;
     private int score = 0;
@@ -22,6 +22,9 @@ public class NodeManager : SingleTon<NodeManager>
     public RandomPitchPlay makeSound;
 
     [HideInInspector] public Color warningColor;
+
+    public StageSettingSO stageSO;
+    int[] clearTargets;
     public int Score {
         get { return score; }
         set
@@ -60,16 +63,52 @@ public class NodeManager : SingleTon<NodeManager>
         node.num = num;
         blankNode.Remove(node);
         yield return new WaitForSeconds(delay);
-        Instantiate(visual, node.transform.position + new Vector3(0f, 0.1144f, 0f), node.transform.rotation, node.transform).GetComponent<VisualMove>().SetColor();
+
+        Vector3 pos = node.transform.position + new Vector3(0f, 0.1144f, 0f);
+        VisualMove newNode = Instantiate(visual, pos, node.transform.rotation, node.transform).GetComponent<VisualMove>();
+        newNode.SetColor();
         makeSound.JustPlay();
+        
+        if (GameManager.Instance.stage)
+        {
+            CheckClear();
+        }
     }
-    public void MakeNode(float visualDelay = 0)
+
+    public void CheckClear()
+    {
+        clearTargets = new int[stageSO.clearTarget.Count];
+        for (int i = 0; i < fullNodes.Length; i++)
+        {
+            if(fullNodes[i].num != 0)
+            {
+                for(int j = 0; j < clearTargets.Length; j++)
+                {
+                    if(fullNodes[i].num == stageSO.clearTarget[j].nodeLevel)
+                    {
+                        clearTargets[j]++;
+                        break;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < clearTargets.Length; i++)
+        {
+            if (clearTargets[i] < stageSO.clearTarget[i].count)
+            {
+                return;
+            }
+        }
+        print("클리어");
+    }
+
+    public void MakeNode(float visualDelay = 0, int level = 0)
     {
         int index = Random.Range(0, blankNode.Count);
         if (visualDelay == 0f)
-            MakeVisual(blankNode[index], Random.Range(1, 4));
+            MakeVisual(blankNode[index], level == 0 ? Random.Range(1, 4) : level);
         else
-            StartCoroutine(MakeVisual(blankNode[index], Random.Range(1, 4), visualDelay));
+            StartCoroutine(MakeVisual(blankNode[index], level==0 ? Random.Range(1, 4):level, visualDelay));
     }
 
     public bool EndCheck(bool chance)//게임이 끝났는지 체크
@@ -161,18 +200,42 @@ public class NodeManager : SingleTon<NodeManager>
         UIManager.instance.PlayUIIn();
         StartCoroutine(StartWork());
     }
-    public IEnumerator StartWork()//시작할 때 할 일들
+    public IEnumerator StartWork(bool stage = true, bool mode = false)//시작할 때 할 일들
     {
+        GameManager.Instance.StartGame(stage, mode, stageSO);
         Score = 0;
         GameManager.Instance.max = 5;
         resurvive = false;
         List<NodeInfo> list = new List<NodeInfo>(fullNodes);
         blankNode = new List<NodeInfo>(fullNodes);
-        for (int i = 0; i < 8; i++)
+        if (stage)
         {
-            int index = Random.Range(0, list.Count);
-            MakeVisual(list[index], Random.Range(1, 4));
-            list.Remove(list[index]);
+            for (int i = 0; i < stageSO.startFormat.Count; i++)
+            {
+                int index = stageSO.startFormat[i].blockNum;
+                MakeVisual(list[index], stageSO.startFormat[i].spawnLevel);
+                list[index] = null;
+            }
+            for(int i = 0; i < list.Count; i++)
+            {
+                if (list[i] == null) list.RemoveAt(i);
+            }
+            int leftSpawn = stageSO.startNodeCount - stageSO.startFormat.Count;
+            for(int i = 0; i < leftSpawn; i++)
+            {
+                int index = Random.Range(0, list.Count);
+                MakeVisual(list[index], Random.Range(1, 4));
+                list.RemoveAt(index);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                int index = Random.Range(0, list.Count);
+                MakeVisual(list[index], Random.Range(1, 4));
+                list.RemoveAt(index);
+            }
         }
         yield return new WaitForEndOfFrame();
         EndCheck(false);
@@ -265,7 +328,6 @@ public class NodeManager : SingleTon<NodeManager>
         OverSet();
 
     }
-
     private void OverSet()
     {
         /*if(Random.value < 0.33333f && PlayerPrefs.GetInt("Ad") == 1)

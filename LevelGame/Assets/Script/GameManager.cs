@@ -15,6 +15,12 @@ public class GameManager : SingleTon<GameManager>
     public int max = 5;
 
     public GameObject[] particles;
+
+    //게임 모드, 스테이지를 위한 애들
+    [HideInInspector] public bool stage = false;
+    [HideInInspector] public bool mode = false;
+    int dragCount;
+    List<SpawnNode> spawnNodes;
     public void Awake()
     {
         if (!PlayerPrefs.HasKey("Best"))
@@ -36,54 +42,69 @@ public class GameManager : SingleTon<GameManager>
         {
             if (click == true)
             {
-                if (connects[0].num == 10)
+                EndDrag();
+            }
+        }
+    }
+
+    private void EndDrag()
+    {
+        if (connects[0].num == 10)
+        {
+            foreach (NodeInfo node in NodeManager.Instance.fullNodes)//10이라서 생긴 warning끄기
+            {
+                if (node.num == 10)
                 {
-                    foreach (NodeInfo node in NodeManager.Instance.fullNodes)
-                    {
-                        if (node.num == 10)
-                        {
-                            node.visualmove.warning.SetActive(false);
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (NodeInfo node in connects[0].neighbor)
-                    {
-                        if (node.num == connects[0].num && node.visualmove != null)
-                        {
-                            node.visualmove.warning.SetActive(false);
-                        }
-                    }
-                }
-                click = false;
-                if (connects[0].num == connects[connects.Count - 1].num && connects.Count >= 2)
-                {
-                    connects[0].num = 0;
-                    connects[connects.Count - 1].num++;
-                    NodeManager.Instance.Score += connects[connects.Count - 1].num;
-                    if (connects[connects.Count - 1].num > max)//최고기록 갱신하면 하나 더 나옴
-                    {
-                        max = connects[connects.Count - 1].num;
-                        if(max == 10)
-                        {
-                            particles[0].SetActive(true);
-                            particles[1].SetActive(true);
-                        }
-                        StartCoroutine(connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, 2));
-                    }
-                    else
-                    {
-                        StartCoroutine(connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, 1));
-                    }
-                }
-                else
-                {
-                    onOtherNode = true;
-                    connects[0].visualmove.ToReset();
+                    node.visualmove.warning.SetActive(false);
                 }
             }
         }
+        else
+        {
+            foreach (NodeInfo node in connects[0].neighbor)//처음클릭한 노드 주변 warning끄기
+            {
+                if (node.num == connects[0].num && node.visualmove != null)
+                {
+                    node.visualmove.warning.SetActive(false);
+                }
+            }
+        }
+        click = false;
+        if (connects[0].num == connects[connects.Count - 1].num && connects.Count >= 2)
+        {
+            Merge();
+        }
+        else
+        {
+            onOtherNode = true;
+            connects[0].visualmove.ToReset();
+        }
+    }
+
+    private void Merge()
+    {
+        connects[0].num = 0;
+        connects[connects.Count - 1].num++;
+        NodeManager.Instance.Score += connects[connects.Count - 1].num;
+        int spawnCount = 1;
+        if (stage) dragCount++;
+        if (connects[connects.Count - 1].num > max)//최고기록 갱신하면 하나 더 나옴
+        {
+            max = connects[connects.Count - 1].num;
+            if (max == 10)
+            {
+                particles[0].SetActive(true);
+                particles[1].SetActive(true);
+            }
+            spawnCount++;
+        }
+        if (stage && spawnNodes.Count > 0 && dragCount == spawnNodes[0].turnCount)
+        {
+            StartCoroutine(connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, 1, spawnNodes[0].spawnLevel));
+            spawnNodes.RemoveAt(0);
+        }
+        else
+            StartCoroutine(connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, spawnCount, 0));
     }
 
     private void OnMouseClick()
@@ -151,7 +172,7 @@ public class GameManager : SingleTon<GameManager>
                     {
                         if (connects.Contains(clicked))//이미 지나간길에 가면
                         {
-                            if (connects[connects.Count - 1] != clicked)//제자리도 아니면
+                            if (connects[connects.Count - 1] != clicked)//제자리도 아니면(지나간 선 밟으면 그 뒤 끊어낸다)
                             {
                                 int index = connects.IndexOf(clicked) + 1;
                                 connects[0].visualmove.CutUp(index);
@@ -193,5 +214,13 @@ public class GameManager : SingleTon<GameManager>
         .RaycastAll(eventDataCurrentPosition, results);
 
         return results.Count > 0;
+    }
+    public void StartGame(bool stage, bool mode, StageSettingSO so)
+    {
+        this.stage = stage;
+        this.mode = mode;
+        dragCount = 0;
+        if (stage)
+            spawnNodes = new List<SpawnNode>(so.spawnNode);
     }
 }
