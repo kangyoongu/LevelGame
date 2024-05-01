@@ -16,6 +16,7 @@ public class VisualMove : MonoBehaviour
     private ParticleSystem particle;
     [HideInInspector] public ParticleSystem bombParticle;
     int value;
+
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
@@ -33,12 +34,13 @@ public class VisualMove : MonoBehaviour
     }
     public void SetColor()//자신 칸의 값에 따라 색 바꿈
     {
+        NodeInfo parentNodeInfo = transform.parent.GetComponent<NodeInfo>();
+        value = parentNodeInfo.num;
+        if (value == 0) return;
         if (meshRenderer.material != NodeManager.Instance.currentMat)
         {
             meshRenderer.material = NodeManager.Instance.currentMat;
         }
-        NodeInfo parentNodeInfo = transform.parent.GetComponent<NodeInfo>();
-        value = parentNodeInfo.num;
         //transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = NodeManager.instance.inside[value - 1];
         Color color = NodeManager.Instance.nodeColor[value-1];
         meshRenderer.material.color = color;
@@ -53,7 +55,13 @@ public class VisualMove : MonoBehaviour
         // 변경된 그라디언트를 재질에 적용
         lineRenderer.colorGradient = gradient;
     }
-    public IEnumerator Move(VisualMove target, int makeNum, int makeLevel)//합치면 그 위치로 움직임
+
+
+    public void Move(VisualMove target, int makeNum, int makeLevel)
+    {
+        StartCoroutine(MoveCoroutine(target, makeNum, makeLevel));
+    }
+    IEnumerator MoveCoroutine(VisualMove target, int makeNum, int makeLevel)//합치면 그 위치로 움직임
     {
         RandomPitchPlay rand = GetComponent<RandomPitchPlay>();
         rand.Play(clips);
@@ -75,6 +83,11 @@ public class VisualMove : MonoBehaviour
         }
 
         #region 쫄깃한 애니메이션
+        if (target == null)
+        {
+            Destroy(gameObject);
+            yield break;
+        }
         Vector3 dir = transform.position - positions[positions.Count - 1];
         float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
         if (angle < 0)
@@ -93,6 +106,12 @@ public class VisualMove : MonoBehaviour
         yield return new WaitForSeconds(0.6f * 0.27f);
         lineRenderer.positionCount = 0;
         yield return new WaitForSeconds(0.6f * 0.73f);
+
+        if (target == null)
+        {
+            Destroy(gameObject);
+            yield break;
+        }//이거 되는 중간에 다시하기 하면 생기는 버그 방지
         target.transform.position = targetPos;
         target.transform.localScale = new Vector3(1.2f, 1f, -1f);
         target.transform.DOScale(new Vector3(1.5f, 1.1f, -1f), 0.1f).SetEase(Ease.OutCubic);
@@ -110,7 +129,9 @@ public class VisualMove : MonoBehaviour
         {
              NodeManager.Instance.CheckClear();
         }
-        NodeManager.Instance.blankNode.Add(GetComponentInParent<NodeInfo>());
+
+        NodeInfo parent = GetComponentInParent<NodeInfo>();
+        NodeManager.Instance.blankNode.Add(parent);
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         PublicAudio.Instance.merge.Play();
         float spawnDelay = 0.5f;
@@ -119,7 +140,9 @@ public class VisualMove : MonoBehaviour
             NodeManager.Instance.MakeNode(spawnDelay, makeLevel);
         }
         yield return new WaitForEndOfFrame();
-        NodeManager.Instance.EndCheck(false);
+        if(GameManager.Instance.canMove)
+            NodeManager.Instance.EndCheck(false);
+
         Destroy(gameObject);
     }
     public void ToReset()
@@ -143,13 +166,15 @@ public class VisualMove : MonoBehaviour
     }
     public IEnumerator Disapear()
     {
-        NodeManager.Instance.blankNode.Add(transform.parent.GetComponent<NodeInfo>());
+        NodeInfo parent = transform.parent.GetComponent<NodeInfo>();
+        NodeManager.Instance.blankNode.Add(parent);
         float delay = Random.Range(0f, 1.5f);
         yield return new WaitForSeconds(delay);
         NodeManager.Instance.PopSoundPlay();
-        transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InElastic).OnComplete(() =>
-        {
-            Destroy(gameObject);
-        });
+        parent.num = 0;
+        transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InElastic);
+        yield return new WaitForSeconds(0.5f);
+
+        Destroy(gameObject);
     }
 }

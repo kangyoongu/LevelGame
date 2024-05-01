@@ -23,8 +23,11 @@ public class NodeManager : SingleTon<NodeManager>
 
     [HideInInspector] public Color warningColor;
 
-    public StageSettingSO stageSO;
+    public StageSettingSO[] stageSO;
+    [HideInInspector]public int stageIndex;
     int[] clearTargets;
+    public TextMeshProUGUI targetText;
+    Coroutine delayMakeVisual;
     public int Score {
         get { return score; }
         set
@@ -60,10 +63,10 @@ public class NodeManager : SingleTon<NodeManager>
     }
     IEnumerator MakeVisual(NodeInfo node, int num, float delay)
     {
-        node.num = num;
         blankNode.Remove(node);
+        node.num = num;
         yield return new WaitForSeconds(delay);
-
+        if (!GameManager.Instance.canMove) yield break;
         Vector3 pos = node.transform.position + new Vector3(0f, 0.1144f, 0f);
         VisualMove newNode = Instantiate(visual, pos, node.transform.rotation, node.transform).GetComponent<VisualMove>();
         newNode.SetColor();
@@ -77,14 +80,14 @@ public class NodeManager : SingleTon<NodeManager>
 
     public void CheckClear()
     {
-        clearTargets = new int[stageSO.clearTarget.Count];
+        clearTargets = new int[stageSO[stageIndex].clearTarget.Count];
         for (int i = 0; i < fullNodes.Length; i++)
         {
             if(fullNodes[i].num != 0)
             {
                 for(int j = 0; j < clearTargets.Length; j++)
                 {
-                    if(fullNodes[i].num == stageSO.clearTarget[j].nodeLevel)
+                    if(fullNodes[i].num == stageSO[stageIndex].clearTarget[j].nodeLevel)
                     {
                         clearTargets[j]++;
                         break;
@@ -94,12 +97,15 @@ public class NodeManager : SingleTon<NodeManager>
         }
         for (int i = 0; i < clearTargets.Length; i++)
         {
-            if (clearTargets[i] < stageSO.clearTarget[i].count)
+            if (clearTargets[i] < stageSO[stageIndex].clearTarget[i].count)
             {
                 return;
             }
         }
-        print("클리어");
+        StartCoroutine(ResetNodes(() =>
+        {
+            UIManager.instance.StageClearUIIn();
+        }, 1.5f));
     }
 
     public void MakeNode(float visualDelay = 0, int level = 0)
@@ -108,7 +114,9 @@ public class NodeManager : SingleTon<NodeManager>
         if (visualDelay == 0f)
             MakeVisual(blankNode[index], level == 0 ? Random.Range(1, 4) : level);
         else
-            StartCoroutine(MakeVisual(blankNode[index], level==0 ? Random.Range(1, 4):level, visualDelay));
+        {
+            delayMakeVisual = StartCoroutine(MakeVisual(blankNode[index], level == 0 ? Random.Range(1, 4) : level, visualDelay));
+        }
     }
 
     public bool EndCheck(bool chance)//게임이 끝났는지 체크
@@ -173,7 +181,7 @@ public class NodeManager : SingleTon<NodeManager>
         }
     }
 
-    void ResetBlank()//정해진 빈칸의 번호들 리셋
+    void ResetBlank()//나뉘지 않은 빈공간끼리 묶어서 빈공간마다 번호를 매기는데 매겨전 번호 초기화하는것
     {
         for(int i = 0; i < fullNodes.Length; i++)
         {
@@ -183,26 +191,44 @@ public class NodeManager : SingleTon<NodeManager>
     public IEnumerator GameOver()//게임 끝남
     {
         yield return new WaitForSeconds(3);
-        if (((Score >= 250 && Random.value > 0.5f) || Score >= 450) && resurvive == false)
+        if (GameManager.Instance.stage)
         {
-            resurvive = true;
-            UIManager.instance.SurvivalUIIn();
+            UIManager.instance.StageFailUIIn();
         }
         else
         {
-            OverSet();
+            if (((Score >= 250 && Random.value > 0.5f) || Score >= 450) && resurvive == false)
+            {
+                resurvive = true;
+                UIManager.instance.SurvivalUIIn();
+            }
+            else
+            {
+                OverSet();
+            }
         }
         GameManager.Instance.canMove = false;
     }
-    public void OnClickStart()//메인화면에서 시작버튼 누르면
+    public void OnClickStartStage(int index)//메인화면에서 시작버튼 누르면
     {
         UIManager.instance.MainUIOut();
+        UIManager.instance.StageUIOut();
+        UIManager.instance.StagePlayUIIn();
+        stageIndex = index;
+        StartCoroutine(StartWork(true, false));
+    }
+
+    public void OnClickStart(int gameMode)//메인화면에서 시작버튼 누르면
+    {
+        UIManager.instance.MainUIOut();
+        UIManager.instance.SelectModeUIOut();
         UIManager.instance.PlayUIIn();
-        StartCoroutine(StartWork());
+        StartCoroutine(StartWork(false, true));
     }
     public IEnumerator StartWork(bool stage = true, bool mode = false)//시작할 때 할 일들
     {
-        GameManager.Instance.StartGame(stage, mode, stageSO);
+        SetAllNumToZero();
+        GameManager.Instance.StartGame(stage, mode, stageSO[stageIndex]);
         Score = 0;
         GameManager.Instance.max = 5;
         resurvive = false;
@@ -210,22 +236,27 @@ public class NodeManager : SingleTon<NodeManager>
         blankNode = new List<NodeInfo>(fullNodes);
         if (stage)
         {
-            for (int i = 0; i < stageSO.startFormat.Count; i++)
+            for (int i = 0; i < stageSO[stageIndex].startFormat.Count; i++)
             {
-                int index = stageSO.startFormat[i].blockNum;
-                MakeVisual(list[index], stageSO.startFormat[i].spawnLevel);
+                int index = stageSO[stageIndex].startFormat[i].blockNum;
+                MakeVisual(list[index], stageSO[stageIndex].startFormat[i].spawnLevel);
                 list[index] = null;
             }
             for(int i = 0; i < list.Count; i++)
             {
                 if (list[i] == null) list.RemoveAt(i);
             }
-            int leftSpawn = stageSO.startNodeCount - stageSO.startFormat.Count;
+            int leftSpawn = stageSO[stageIndex].startNodeCount - stageSO[stageIndex].startFormat.Count;
             for(int i = 0; i < leftSpawn; i++)
             {
                 int index = Random.Range(0, list.Count);
                 MakeVisual(list[index], Random.Range(1, 4));
                 list.RemoveAt(index);
+            }
+            targetText.text = "";
+            for(int i = 0; i < stageSO[stageIndex].clearTarget.Count; i++)
+            {
+                targetText.text += $"level {stageSO[stageIndex].clearTarget[i].nodeLevel} no.{stageSO[stageIndex].clearTarget[i].count}\n";
             }
         }
         else
@@ -249,24 +280,26 @@ public class NodeManager : SingleTon<NodeManager>
     }
     public void RemoveVisual()//블록들 터트리는거
     {
-        UIManager.instance.block[1].SetActive(true);
+        if (delayMakeVisual != null)
+        {
+            StopCoroutine(delayMakeVisual);
+        }
         for (int i = 0; i < fullNodes.Length; i++)
         {
-            fullNodes[i].num = 0;
-            if (!blankNode.Contains(fullNodes[i]) && fullNodes[i].visualmove!= null)
+            if (fullNodes[i].visualmove != null) 
             {
                 StartCoroutine(fullNodes[i].visualmove.Disapear());
             }
         }
     }
-    public IEnumerator GoToMain()//메인화면으로 가는거
+    public IEnumerator ResetNodes(Action action, float startDelay = 0f)
     {
-        yield return new WaitForSeconds(2.2f);
-        UIManager.instance.block[1].SetActive(false);
+        GameManager.Instance.canMove = false;
+        yield return new WaitForSeconds(startDelay);
+        RemoveVisual();
+        yield return new WaitForSeconds(2f);
         ResetBlank();
-        Score = 0;
-        UIManager.instance.MainUIIn();
-        UIManager.instance.PlayUIOut();
+        action?.Invoke();
     }
     public void OnClickAd()//광고보기 누르면
     {
@@ -300,13 +333,13 @@ public class NodeManager : SingleTon<NodeManager>
                 if (fullNodes[i].num != 0)
                 {
                     nums.Add(fullNodes[i].num);
-                    fullNodes[i].num = 0;
                 }
                 if (!blankNode.Contains(fullNodes[i]))
                 {
                     StartCoroutine(fullNodes[i].visualmove.Disapear());
                 }
             }
+            SetAllNumToZero();
             yield return new WaitForSeconds(1.5f);
             for (int i = 0; i < nums.Count; i++)
             {
@@ -321,6 +354,15 @@ public class NodeManager : SingleTon<NodeManager>
         UIManager.instance.block[2].SetActive(false);
         GameManager.Instance.canMove = true;
     }
+
+    private void SetAllNumToZero()
+    {
+        for(int i = 0; i <fullNodes.Length; i++)
+        {
+            if (fullNodes[i].num != 0) fullNodes[i].num = 0;
+        }
+    }
+
     public void OnClickDone()//끝내기 누르면
     {
         AdBackground.minus = false;

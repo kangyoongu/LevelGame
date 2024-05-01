@@ -21,6 +21,7 @@ public class GameManager : SingleTon<GameManager>
     [HideInInspector] public bool mode = false;
     int dragCount;
     List<SpawnNode> spawnNodes;
+
     public void Awake()
     {
         if (!PlayerPrefs.HasKey("Best"))
@@ -100,11 +101,11 @@ public class GameManager : SingleTon<GameManager>
         }
         if (stage && spawnNodes.Count > 0 && dragCount == spawnNodes[0].turnCount)
         {
-            StartCoroutine(connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, 1, spawnNodes[0].spawnLevel));
+            connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, 1, spawnNodes[0].spawnLevel);
             spawnNodes.RemoveAt(0);
         }
         else
-            StartCoroutine(connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, spawnCount, 0));
+            connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, spawnCount, 0);
     }
 
     private void OnMouseClick()
@@ -221,6 +222,8 @@ public class GameManager : SingleTon<GameManager>
         this.mode = mode;
         dragCount = 0;
         if (stage)
+        {
             spawnNodes = new List<SpawnNode>(so.spawnNode);
+        }
     }
 }

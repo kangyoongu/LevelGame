@@ -10,14 +10,15 @@ public class SnapScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     public Scrollbar scrollbar;
     [SerializeField] private TextMeshProUGUI pageText;
 
-    [SerializeField] int size = 2;
+    public int size = 2;
     float[] pos;
     float distance, curPos, targetPos;
     bool isDrag = false;
     int targetIndex;
 
-    private void Start()
+    public void Init()
     {
+        PlayerPrefs.DeleteKey("Snap");
         pos = new float[size];
         distance = 1f / (size - 1);
         for (int i = 0; i < size; i++) pos[i] = distance * i;
@@ -26,7 +27,7 @@ public class SnapScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             PlayerPrefs.SetInt("Snap", 0);
         }
         targetPos = pos[PlayerPrefs.GetInt("Snap")];
-        pageText.text = $"{targetPos + 1} / {size}";
+        pageText.text = $"{PlayerPrefs.GetInt("Snap")+1} / {size}";
         scrollbar.value = targetPos;
     }
     public void OnBeginDrag(PointerEventData eventData)
@@ -46,21 +47,21 @@ public class SnapScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             {
                 --targetIndex;
                 targetPos = curPos - distance;
-                pageText.text = $"{targetPos+1} / {size}";
                 PlayerPrefs.SetInt("Snap", targetIndex);
+                pageText.text = $"{PlayerPrefs.GetInt("Snap") + 1} / {size}";
             }
             else if (eventData.delta.x < -10f && curPos + distance <= 1.01f)
             {
                 ++targetIndex;
                 targetPos = curPos + distance;
-                pageText.text = $"{targetPos+1} / {size}";
                 PlayerPrefs.SetInt("Snap", targetIndex);
+                pageText.text = $"{PlayerPrefs.GetInt("Snap") + 1} / {size}";
             }
         }
         else
         {
-            pageText.text = $"{targetPos + 1} / {size}";
             PlayerPrefs.SetInt("Snap", targetIndex); 
+            pageText.text = $"{PlayerPrefs.GetInt("Snap") + 1} / {size}";
         }
     }
 
@@ -79,6 +80,6 @@ public class SnapScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
     private void Update()
     {
-        if(!isDrag) scrollbar.value = Mathf.Lerp(scrollbar.value, targetPos, 8f * Time.deltaTime);
+        if(!isDrag && size > 1) scrollbar.value = Mathf.Lerp(scrollbar.value, targetPos, 8f * Time.deltaTime);
     }
 }

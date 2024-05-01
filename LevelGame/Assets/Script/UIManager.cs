@@ -7,6 +7,11 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Audio;
 
+public enum GameMode : short
+{
+    Stage,
+    Infinity,
+}
 public enum Dir : short
 {
     x,
@@ -29,11 +34,14 @@ public class UIManager : MonoBehaviour
     public UI[] gameOverUI;
     public UI[] mainUI;
     public UI[] playUI;
+    public UI[] stagePlayUI;
     public UI[] survivalUI;
     public UI[] themeUI;
     public UI[] menuUI;
     public UI[] stageUI;
     public UI[] selectModeUI;
+    public UI[] stageClearUI;
+    public UI[] stageFailUI;
 
     public static UIManager instance;
     bool digree = false;
@@ -48,7 +56,6 @@ public class UIManager : MonoBehaviour
     [Header("Sounds")]
     public AudioSource mainSound;
     public AudioSource gameoverSound;
-
 
     public AudioMixer mixer;
 
@@ -77,72 +84,43 @@ public class UIManager : MonoBehaviour
         In(gameOverUI);
         Out(playUI);
     }
-    public void GameOverUIOut()
-    {
-        Out(gameOverUI);
-    }
+    public void GameOverUIOut() => Out(gameOverUI);
     public void MainUIIn()
     {
         mainSound.Play();
         //cam.DOMoveY(-1.45f, 0.5f);
         In(mainUI);
     }
-
-    public void MainUIOut()
-    {
+    public void MainUIOut() => Out(mainUI);
         //cam.DOMoveY(0, 0.5f);
-        Out(mainUI);
-    }
-    public void PlayUIIn()
-    {
-        In(playUI);
-    }
+    public void PlayUIIn() => In(playUI);
     public void PlayUIOut()
     {
         Out(playUI);
         digreePack.DOScaleX(0, 0.4f).SetEase(Ease.InBack);
         digree = false;
     }
-    public void SurvivalUIIn()
+    public void StagePlayUIIn() => In(stagePlayUI);
+    public void StagePlayUIOut()
     {
-        In(survivalUI);
+        Out(stagePlayUI);
+        digreePack.DOScaleX(0, 0.4f).SetEase(Ease.InBack);
+        digree = false;
     }
-    public void SurvivalUIOut()
-    {
-        Out(survivalUI);
-    }
-    public void ThemeUIIn()
-    {
-        In(themeUI);
-    }
-    public void ThemeUIOut()
-    {
-        Out(themeUI);
-    }
-    public void MenuUIIn()
-    {
-        In(menuUI);
-    }
-    public void MenuUIOut()
-    {
-        Out(menuUI);
-    }
-    public void StageUIIn()
-    {
-        In(stageUI);
-    }
-    public void StageUIOut()
-    {
-        Out(stageUI);
-    }
-    public void SelectModeUIIn()
-    {
-        In(selectModeUI);
-    }
-    public void SelectModeUIOut()
-    {
-        Out(selectModeUI);
-    }
+    public void SurvivalUIIn() => In(survivalUI);
+    public void SurvivalUIOut() => Out(survivalUI);
+    public void ThemeUIIn() => In(themeUI);
+    public void ThemeUIOut() => Out(themeUI);
+    public void MenuUIIn() => In(menuUI);
+    public void MenuUIOut() => Out(menuUI);
+    public void StageUIIn() => In(stageUI);
+    public void StageUIOut() => Out(stageUI);
+    public void SelectModeUIIn() => In(selectModeUI);
+    public void SelectModeUIOut() => Out(selectModeUI);
+    public void StageClearUIIn() => In(stageClearUI);
+    public void StageClearUIOut() => Out(stageClearUI);
+    public void StageFailUIIn() => In(stageFailUI);
+    public void StageFailUIOut() => Out(stageFailUI);
     private void In(UI[] lst)
     {
         block[0].SetActive(true);
@@ -233,21 +211,23 @@ public class UIManager : MonoBehaviour
     {
         GameOverUIOut();
         MenuUIOut();
-        NodeManager.Instance.RemoveVisual();
-        StartCoroutine(NodeManager.Instance.GoToMain());
+        StartCoroutine(NodeManager.Instance.ResetNodes(() =>
+        {
+            NodeManager.Instance.Score = 0;
+            MainUIIn();
+            PlayUIOut();
+        }));
     }
     public void OnClickAgain()//다시하기 누르면
     {
         GameOverUIOut();
         MenuUIOut();
-        NodeManager.Instance.RemoveVisual();
-        StartCoroutine(AgainDelay());
+        StartCoroutine(NodeManager.Instance.ResetNodes(AgainDelay));
     }
-    IEnumerator AgainDelay()
+    void AgainDelay()
     {
-        yield return new WaitForSeconds(2f);
         PlayUIIn();
-        StartCoroutine(NodeManager.Instance.StartWork());
+        StartCoroutine(NodeManager.Instance.StartWork(GameManager.Instance.stage, GameManager.Instance.mode));
     }
     public void OnClickMute()
     {
