@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class VisualMove : MonoBehaviour
+public class VisualMove : VisualMoveBase
 {
     public List<Vector3> positions = new List<Vector3>();
     public float speed = 3;
@@ -25,13 +25,13 @@ public class VisualMove : MonoBehaviour
         particle = transform.GetChild(2).GetComponent<ParticleSystem>();
         bombParticle = transform.GetChild(3).GetComponent<ParticleSystem>();
     }
-    private void Start()
+   /* private void Start()
     {
         transform.localScale = Vector3.zero;
         transform.DOScale(new Vector3(1.2f, 0.8f, -1f), 0.3f).SetEase(Ease.OutBack);
         transform.DOScale(new Vector3(1f, 1f, -1f), 0.7f).SetEase(Ease.OutElastic).SetDelay(0.3f);
         lineRenderer.positionCount = 0; // 포인트 개수 설정 (시작점과 끝점)
-    }
+    }*/
     public void SetColor()//자신 칸의 값에 따라 색 바꿈
     {
         NodeInfo parentNodeInfo = transform.parent.GetComponent<NodeInfo>();
@@ -65,6 +65,7 @@ public class VisualMove : MonoBehaviour
     {
         RandomPitchPlay rand = GetComponent<RandomPitchPlay>();
         rand.Play(clips);
+        NodeManager.Instance.OnStartMode?.Invoke();
         particle.startColor = NodeManager.Instance.nodeColor[value-1];
         particle.Play();
         for(int i = 0; i < positions.Count-1; i++)
@@ -139,10 +140,10 @@ public class VisualMove : MonoBehaviour
         {
             NodeManager.Instance.MakeNode(spawnDelay, makeLevel);
         }
+        NodeManager.Instance.OnEndMove?.Invoke();
         yield return new WaitForEndOfFrame();
         if(GameManager.Instance.canMove)
             NodeManager.Instance.EndCheck(false);
-
         Destroy(gameObject);
     }
     public void ToReset()
@@ -164,7 +165,7 @@ public class VisualMove : MonoBehaviour
         lineRenderer.GetPositions(x);
         positions = new List<Vector3>(x);
     }
-    public IEnumerator Disapear()
+ /*   public IEnumerator Remove()
     {
         NodeInfo parent = transform.parent.GetComponent<NodeInfo>();
         NodeManager.Instance.blankNode.Add(parent);
@@ -176,5 +177,5 @@ public class VisualMove : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         Destroy(gameObject);
-    }
+    }*/
 }

@@ -7,16 +7,29 @@ using UnityEngine.UI;
 public class StageButton : MonoBehaviour
 {
     TextMeshProUGUI childText;
+    GameObject image;
     int index;
     void Start()
     {
-        index = transform.GetSiblingIndex();
+        StageSetter.setButton += SetImage;
         childText = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        image = transform.GetChild(1).gameObject;
+        index = transform.GetSiblingIndex() + (32 * transform.parent.GetSiblingIndex());
         childText.text = (index+1).ToString();
+        SetImage();
         GetComponent<Button>().onClick.AddListener(DoStart);
     }
     void DoStart()
     {
-        NodeManager.Instance.OnClickStartStage(index);
+        //if (index <= GameManager.Instance.StageNum)
+            NodeManager.Instance.OnClickStartStage(index);
+    }
+    void SetImage()
+    {
+        if (/*index  <= GameManager.Instance.StageNum*/true)
+        {
+            image.SetActive(false);
+            childText.gameObject.SetActive(true);
+        }
     }
 }

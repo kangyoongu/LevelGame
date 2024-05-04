@@ -12,22 +12,28 @@ public class NodeManager : SingleTon<NodeManager>
     public GameObject visual;
 
     public Color[] nodeColor;
-    [HideInInspector]public Material currentMat;
     public TextMeshProUGUI[] bestText;
     public TextMeshProUGUI[] currentText;
-    private int score = 0;
+    public TextMeshProUGUI targetText;
+    int[] clearTargets;
     bool resurvive = false;
 
     public RandomPitchPlay popSound;
     public RandomPitchPlay makeSound;
 
+    [HideInInspector] public Material currentMat;
     [HideInInspector] public Color warningColor;
+    [HideInInspector] public int stageIndex;
 
     public StageSettingSO[] stageSO;
-    [HideInInspector]public int stageIndex;
-    int[] clearTargets;
-    public TextMeshProUGUI targetText;
+    public GameObject[] modeObject;
+    IMode[] modes;
+    public IMode currentMode;
+    public Action OnStartMode;
+    public Action OnEndMove;
+
     Coroutine delayMakeVisual;
+    private int score = 0;
     public int Score {
         get { return score; }
         set
@@ -43,6 +49,11 @@ public class NodeManager : SingleTon<NodeManager>
     }
     private void Start()
     {
+        modes = new IMode[modeObject.Length];
+        for(int i = 0; i < modeObject.Length; i++)
+        {
+            modes[i] = modeObject[i].GetComponent<IMode>();
+        }
         RenewalText();
     }
 
@@ -102,9 +113,14 @@ public class NodeManager : SingleTon<NodeManager>
                 return;
             }
         }
+
+        if (stageIndex >= GameManager.Instance.StageNum)
+        {
+            GameManager.Instance.StageNum++;
+        }
         StartCoroutine(ResetNodes(() =>
         {
-            UIManager.instance.StageClearUIIn();
+            UIManager.Instance.StageClearUIIn();
         }, 1.5f));
     }
 
@@ -140,7 +156,7 @@ public class NodeManager : SingleTon<NodeManager>
                 {
                     for (int x = 0; x < blankNode[j].neighbor.Count; x++)
                     {
-                        if (!node.Contains(blankNode[j].neighbor[x]) && !blankNode.Contains(blankNode[j].neighbor[x]))
+                        if (!node.Contains(blankNode[j].neighbor[x]) && !blankNode.Contains(blankNode[j].neighbor[x]) && currentMode.CanDrag(blankNode[j], blankNode[j].neighbor[x]))
                         {
                             node.Add(blankNode[j].neighbor[x]);
                         }
@@ -174,7 +190,7 @@ public class NodeManager : SingleTon<NodeManager>
         nodeInfo.blankIndex = index;
         for(int i = 0; i < nodeInfo.neighbor.Count; i++)
         {
-            if(nodeInfo.neighbor[i].blankIndex == 0 && nodeInfo.neighbor[i].num == 0)
+            if(nodeInfo.neighbor[i].blankIndex == 0 && nodeInfo.neighbor[i].num == 0 && currentMode.CanDrag(nodeInfo, nodeInfo.neighbor[i]))
             {
                 PutIndex(index, nodeInfo.neighbor[i]);
             }
@@ -193,14 +209,14 @@ public class NodeManager : SingleTon<NodeManager>
         yield return new WaitForSeconds(3);
         if (GameManager.Instance.stage)
         {
-            UIManager.instance.StageFailUIIn();
+            UIManager.Instance.StageFailUIIn();
         }
         else
         {
             if (((Score >= 250 && Random.value > 0.5f) || Score >= 450) && resurvive == false)
             {
                 resurvive = true;
-                UIManager.instance.SurvivalUIIn();
+                UIManager.Instance.SurvivalUIIn();
             }
             else
             {
@@ -211,21 +227,21 @@ public class NodeManager : SingleTon<NodeManager>
     }
     public void OnClickStartStage(int index)//메인화면에서 시작버튼 누르면
     {
-        UIManager.instance.MainUIOut();
-        UIManager.instance.StageUIOut();
-        UIManager.instance.StagePlayUIIn();
+        UIManager.Instance.MainUIOut();
+        UIManager.Instance.StageUIOut();
+        UIManager.Instance.StagePlayUIIn();
         stageIndex = index;
-        StartCoroutine(StartWork(true, false));
+        StartCoroutine(StartWork(true));
     }
 
     public void OnClickStart(int gameMode)//메인화면에서 시작버튼 누르면
     {
-        UIManager.instance.MainUIOut();
-        UIManager.instance.SelectModeUIOut();
-        UIManager.instance.PlayUIIn();
-        StartCoroutine(StartWork(false, true));
+        UIManager.Instance.MainUIOut();
+        UIManager.Instance.SelectModeUIOut();
+        UIManager.Instance.PlayUIIn();
+        StartCoroutine(StartWork(false, gameMode));
     }
-    public IEnumerator StartWork(bool stage = true, bool mode = false)//시작할 때 할 일들
+    public IEnumerator StartWork(bool stage = true, int mode = 0)//시작할 때 할 일들
     {
         SetAllNumToZero();
         GameManager.Instance.StartGame(stage, mode, stageSO[stageIndex]);
@@ -242,9 +258,11 @@ public class NodeManager : SingleTon<NodeManager>
                 MakeVisual(list[index], stageSO[stageIndex].startFormat[i].spawnLevel);
                 list[index] = null;
             }
-            for(int i = 0; i < list.Count; i++)
+            int ind = 0;
+            while (ind < list.Count)
             {
-                if (list[i] == null) list.RemoveAt(i);
+                if (list[ind] == null) list.RemoveAt(ind);
+                else ind++;
             }
             int leftSpawn = stageSO[stageIndex].startNodeCount - stageSO[stageIndex].startFormat.Count;
             for(int i = 0; i < leftSpawn; i++)
@@ -268,11 +286,17 @@ public class NodeManager : SingleTon<NodeManager>
                 list.RemoveAt(index);
             }
         }
+        OnEndMove = null;
+        OnEndMove += modes[mode].EndMove;
+        OnStartMode = null;
+        OnStartMode += modes[mode].StartMove;
+        modes[mode].Init();
+        currentMode = modes[mode];
         yield return new WaitForEndOfFrame();
         EndCheck(false);
         yield return new WaitForSeconds(0.6f);
         GameManager.Instance.canMove = true;
-        UIManager.instance.block[1].SetActive(false);
+        UIManager.Instance.block[1].SetActive(false);
     }
     public void PopSoundPlay()
     {
@@ -288,7 +312,7 @@ public class NodeManager : SingleTon<NodeManager>
         {
             if (fullNodes[i].visualmove != null) 
             {
-                StartCoroutine(fullNodes[i].visualmove.Disapear());
+                StartCoroutine(fullNodes[i].visualmove.Remove());
             }
         }
     }
@@ -297,6 +321,7 @@ public class NodeManager : SingleTon<NodeManager>
         GameManager.Instance.canMove = false;
         yield return new WaitForSeconds(startDelay);
         RemoveVisual();
+        currentMode.ResetGame();
         yield return new WaitForSeconds(2f);
         ResetBlank();
         action?.Invoke();
@@ -317,8 +342,8 @@ public class NodeManager : SingleTon<NodeManager>
 
     private void Reservive()//살리기
     {
-        UIManager.instance.block[2].SetActive(true);
-        UIManager.instance.SurvivalUIOut();
+        UIManager.Instance.block[2].SetActive(true);
+        UIManager.Instance.SurvivalUIOut();
         AdBackground.minus = false;
         StartCoroutine(ReturnBlock());
     }
@@ -336,7 +361,7 @@ public class NodeManager : SingleTon<NodeManager>
                 }
                 if (!blankNode.Contains(fullNodes[i]))
                 {
-                    StartCoroutine(fullNodes[i].visualmove.Disapear());
+                    StartCoroutine(fullNodes[i].visualmove.Remove());
                 }
             }
             SetAllNumToZero();
@@ -351,7 +376,7 @@ public class NodeManager : SingleTon<NodeManager>
             }
             yield return new WaitForSeconds(0.5f);
         }
-        UIManager.instance.block[2].SetActive(false);
+        UIManager.Instance.block[2].SetActive(false);
         GameManager.Instance.canMove = true;
     }
 
@@ -366,7 +391,7 @@ public class NodeManager : SingleTon<NodeManager>
     public void OnClickDone()//끝내기 누르면
     {
         AdBackground.minus = false;
-        UIManager.instance.SurvivalUIOut();
+        UIManager.Instance.SurvivalUIOut();
         OverSet();
 
     }
@@ -377,8 +402,8 @@ public class NodeManager : SingleTon<NodeManager>
             Debug.Log("광고나옴");
             AdmobAdsScript.instance.ShowInterAd();
         }*/
-        UIManager.instance.GameOverUIIn();
-        UIManager.instance.PlayUIOut();
+        UIManager.Instance.GameOverUIIn();
+        UIManager.Instance.PlayUIOut();
         resurvive = false;
     }
 }

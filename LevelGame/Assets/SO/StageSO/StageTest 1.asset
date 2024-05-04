@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44ee43c6fcaba87439e01c8ffb735b68, type: 3}
+  m_Name: StageTest 1
+  m_EditorClassIdentifier: 
+  clearTarget:
+  - nodeLevel: 5
+    count: 6
+  startFormat:
+  - blockNum: 1
+    spawnLevel: 5
+  - blockNum: 2
+    spawnLevel: 5
+  - blockNum: 3
+    spawnLevel: 5
+  - blockNum: 4
+    spawnLevel: 5
+  - blockNum: 10
+    spawnLevel: 4
+  startNodeCount: 10
+  spawnNode:
+  - turnCount: 3
+    spawnLevel: 5
+  - turnCount: 4
+    spawnLevel: 5

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class StageSetter : MonoBehaviour
     public Transform chapterParent;
     public SnapScroll scroll;
     int stageNum;
+    public static Action setButton;
     private void Start()
     {
         stageNum = NodeManager.Instance.stageSO.Length;

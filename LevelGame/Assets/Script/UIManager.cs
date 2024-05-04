@@ -29,7 +29,7 @@ public struct UI
     public bool setActive;
     public float fadeFloat;
 }
-public class UIManager : MonoBehaviour
+public class UIManager : SingleTon<UIManager>
 {
     public UI[] gameOverUI;
     public UI[] mainUI;
@@ -43,7 +43,6 @@ public class UIManager : MonoBehaviour
     public UI[] stageClearUI;
     public UI[] stageFailUI;
 
-    public static UIManager instance;
     bool digree = false;
     public RectTransform digreePack;
     //public Transform cam;
@@ -63,7 +62,6 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         //PlayerPrefs.DeleteAll();
-        if (instance == null) instance = this;
         if (!PlayerPrefs.HasKey("Sound"))
         {
             PlayerPrefs.SetInt("Sound", 1);
@@ -211,22 +209,35 @@ public class UIManager : MonoBehaviour
     {
         GameOverUIOut();
         MenuUIOut();
+        StageClearUIOut();
+        StageFailUIOut();
         StartCoroutine(NodeManager.Instance.ResetNodes(() =>
         {
             NodeManager.Instance.Score = 0;
             MainUIIn();
             PlayUIOut();
+            StagePlayUIOut();
         }));
+    }
+    public void OnClickNextStage()
+    {
+        StageClearUIOut();
+        NodeManager.Instance.OnClickStartStage(++NodeManager.Instance.stageIndex);
     }
     public void OnClickAgain()//다시하기 누르면
     {
         GameOverUIOut();
         MenuUIOut();
+        StageClearUIOut();
+        StageFailUIOut();
         StartCoroutine(NodeManager.Instance.ResetNodes(AgainDelay));
     }
     void AgainDelay()
     {
-        PlayUIIn();
+        if(GameManager.Instance.stage)
+            StagePlayUIIn();
+        else
+            PlayUIIn();
         StartCoroutine(NodeManager.Instance.StartWork(GameManager.Instance.stage, GameManager.Instance.mode));
     }
     public void OnClickMute()

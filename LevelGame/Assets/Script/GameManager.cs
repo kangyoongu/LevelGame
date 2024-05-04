@@ -18,16 +18,31 @@ public class GameManager : SingleTon<GameManager>
 
     //게임 모드, 스테이지를 위한 애들
     [HideInInspector] public bool stage = false;
-    [HideInInspector] public bool mode = false;
+    [HideInInspector] public int mode = 0;
     int dragCount;
     List<SpawnNode> spawnNodes;
-
+    public int StageNum {
+        get
+        {
+            return PlayerPrefs.GetInt("StageNum");
+        }
+        set
+        {
+            PlayerPrefs.SetInt("StageNum", value);
+            StageSetter.setButton?.Invoke();
+        }
+    }
     public void Awake()
     {
         if (!PlayerPrefs.HasKey("Best"))
         {
             PlayerPrefs.SetInt("Best", 0);
         }
+        if (!PlayerPrefs.HasKey("StageNum"))
+        {
+            PlayerPrefs.SetInt("StageNum", 0);
+        }
+
         Application.targetFrameRate = 90;
     }
     void Update()
@@ -184,16 +199,19 @@ public class GameManager : SingleTon<GameManager>
                         }
                         else if (connects[connects.Count - 1].neighbor.Contains(clicked) && onOtherNode == true)//새로운 길에 가면
                         {
-                            if (clicked.num <= 0)
+                            if (NodeManager.Instance.currentMode.CanDrag(connects[connects.Count - 1], clicked))
                             {
-                                connects.Add(clicked);
-                                connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
-                            }
-                            else if (clicked.num == connects[0].num && !connects[0].neighbor.Contains(clicked) && connects[0].num < 10 && clicked.visualmove != null)//이웃은 안합쳐지게
-                            {
-                                connects.Add(clicked);
-                                connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
-                                onOtherNode = false;
+                                if (clicked.num <= 0)
+                                {
+                                    connects.Add(clicked);
+                                    connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
+                                }
+                                else if (clicked.num == connects[0].num && !connects[0].neighbor.Contains(clicked) && connects[0].num < 10 && clicked.visualmove != null)//이웃은 안합쳐지게
+                                {
+                                    connects.Add(clicked);
+                                    connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
+                                    onOtherNode = false;
+                                }
                             }
                         }
                     }
@@ -216,7 +234,7 @@ public class GameManager : SingleTon<GameManager>
 
         return results.Count > 0;
     }
-    public void StartGame(bool stage, bool mode, StageSettingSO so)
+    public void StartGame(bool stage, int mode, StageSettingSO so)
     {
         this.stage = stage;
         this.mode = mode;
