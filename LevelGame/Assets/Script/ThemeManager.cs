@@ -92,9 +92,9 @@ public class ThemeManager : SingleTon<ThemeManager>
 
         foreach(NodeInfo node in NodeManager.Instance.fullNodes)
         {
-            if(node.visualmove != null)
+            if(node.visualMove != null)
             {
-                node.visualmove.SetColor();
+                node.visualMove.SetColor();
             }
         }
 

@@ -39,7 +39,7 @@ public class UIManager : SingleTon<UIManager>
     public UI[] themeUI;
     public UI[] menuUI;
     public UI[] stageUI;
-    public UI[] selectModeUI;
+    public RectTransform selectModeUI;
     public UI[] stageClearUI;
     public UI[] stageFailUI;
 
@@ -59,6 +59,8 @@ public class UIManager : SingleTon<UIManager>
     public AudioMixer mixer;
 
     public GameObject ad;
+
+    public GameObject[] modeIcons;
     private void Awake()
     {
         //PlayerPrefs.DeleteAll();
@@ -89,8 +91,12 @@ public class UIManager : SingleTon<UIManager>
         //cam.DOMoveY(-1.45f, 0.5f);
         In(mainUI);
     }
-    public void MainUIOut() => Out(mainUI);
+    public void MainUIOut()
+    {
+        Out(mainUI);
+        SelectModeUIOut();
         //cam.DOMoveY(0, 0.5f);
+    }
     public void PlayUIIn() => In(playUI);
     public void PlayUIOut()
     {
@@ -113,8 +119,12 @@ public class UIManager : SingleTon<UIManager>
     public void MenuUIOut() => Out(menuUI);
     public void StageUIIn() => In(stageUI);
     public void StageUIOut() => Out(stageUI);
-    public void SelectModeUIIn() => In(selectModeUI);
-    public void SelectModeUIOut() => Out(selectModeUI);
+    public void SelectModeUIIn()
+    {
+        selectModeUI.gameObject.SetActive(true);
+        selectModeUI.DOScale(Vector2.one, 0.4f).SetEase(Ease.OutBack);
+    }
+    public void SelectModeUIOut() => selectModeUI.DOScale(Vector2.zero, 0.3f).SetEase(Ease.InCubic).OnComplete(() => selectModeUI.gameObject.SetActive(false));
     public void StageClearUIIn() => In(stageClearUI);
     public void StageClearUIOut() => Out(stageClearUI);
     public void StageFailUIIn() => In(stageFailUI);
@@ -270,4 +280,19 @@ public class UIManager : SingleTon<UIManager>
         AdmobAdsScript.instance.DestroyBannerAd();
         ad.SetActive(false);
     }*/
+    public void OnClickChangeMode(int mode)
+    {
+        PlayerPrefs.SetInt("Mode", mode);
+        NodeManager.Instance.RenewalText();
+        RenewalModeIcon();
+        SelectModeUIOut();
+    }
+    public void RenewalModeIcon()
+    {
+        for(int i = 0; i < modeIcons.Length; i++)
+        {
+            modeIcons[i].SetActive(false);
+        }
+        modeIcons[PlayerPrefs.GetInt("Mode")].SetActive(true);
+    }
 }

@@ -17,18 +17,18 @@ MonoBehaviour:
     count: 6
   startFormat:
   - blockNum: 1
-    spawnLevel: 5
+    spawnLevel: 1
   - blockNum: 2
-    spawnLevel: 5
+    spawnLevel: 1
   - blockNum: 3
-    spawnLevel: 5
+    spawnLevel: 1
   - blockNum: 4
-    spawnLevel: 5
-  - blockNum: 10
-    spawnLevel: 4
-  startNodeCount: 10
+    spawnLevel: 1
+  startNodeCount: 18
   spawnNode:
+  - turnCount: 1
+    spawnLevel: 1
+  - turnCount: 2
+    spawnLevel: 1
   - turnCount: 3
-    spawnLevel: 5
-  - turnCount: 4
-    spawnLevel: 5
+    spawnLevel: 1

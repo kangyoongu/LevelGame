@@ -8,8 +8,9 @@ using Random = UnityEngine.Random;
 public class NodeManager : SingleTon<NodeManager>
 {
     public NodeInfo[] fullNodes;
-    public List<NodeInfo> blankNode = new List<NodeInfo>();
+    [HideInInspector] public List<NodeInfo> blankNode = new List<NodeInfo>();
     public GameObject visual;
+    public GameObject bombVisual;
 
     public Color[] nodeColor;
     public TextMeshProUGUI[] bestText;
@@ -17,6 +18,7 @@ public class NodeManager : SingleTon<NodeManager>
     public TextMeshProUGUI targetText;
     int[] clearTargets;
     bool resurvive = false;
+    bool removing = false;//플레이하다가 다시하기누르면 막 생기면서 난리치는거 방지
 
     public RandomPitchPlay popSound;
     public RandomPitchPlay makeSound;
@@ -39,11 +41,33 @@ public class NodeManager : SingleTon<NodeManager>
         set
         {
             score = value;
-
-            if (score > PlayerPrefs.GetInt("Best"))
-            {
-                PlayerPrefs.SetInt("Best", score);
+            switch (PlayerPrefs.GetInt("Mode")) {
+                case 0:
+                    if (score > PlayerPrefs.GetInt("Best"))
+                    {
+                        PlayerPrefs.SetInt("Best", score);
+                    }
+                    break;
+                case 1:
+                    if (score > PlayerPrefs.GetInt("BlockBest"))
+                    {
+                        PlayerPrefs.SetInt("BlockBest", score);
+                    }
+                    break;
+                case 2:
+                    if (score > PlayerPrefs.GetInt("MultiBest"))
+                    {
+                        PlayerPrefs.SetInt("MultiBest", score);
+                    }
+                    break;
+                case 3:
+                    if (score > PlayerPrefs.GetInt("BombBest"))
+                    {
+                        PlayerPrefs.SetInt("BombBest", score);
+                    }
+                    break;
             }
+
             RenewalText();
         }
     }
@@ -57,18 +81,40 @@ public class NodeManager : SingleTon<NodeManager>
         RenewalText();
     }
 
-    private void RenewalText()
+    public void RenewalText()
     {
-        for(int i = 0; i < bestText.Length; i++)
-            bestText[i].text = PlayerPrefs.GetInt("Best").ToString("0");
+        for (int i = 0; i < bestText.Length; i++)
+        {
+            switch (PlayerPrefs.GetInt("Mode")) {
+                case 0:
+                    bestText[i].text = PlayerPrefs.GetInt("Best").ToString("0");
+                    break;
+                case 1:
+                    bestText[i].text = PlayerPrefs.GetInt("BlockBest").ToString("0");
+                    break;
+                case 2:
+                    bestText[i].text = PlayerPrefs.GetInt("MultiBest").ToString("0");
+                    break;
+                case 3:
+                    bestText[i].text = PlayerPrefs.GetInt("BombBest").ToString("0");
+                    break;
+            }
+        }
         for (int i = 0; i < currentText.Length; i++)
             currentText[i].text = Score.ToString("0");
     }
 
-    void MakeVisual(NodeInfo node, int num)
+    public void MakeVisual(NodeInfo node, int num)
     {
         node.num = num;
         Instantiate(visual, node.transform.position + new Vector3(0f, 0.1144f, 0f), node.transform.rotation, node.transform).GetComponent<VisualMove>().SetColor();
+        blankNode.Remove(node);
+        makeSound.JustPlay();
+    }
+    public void MakeBombVisual(NodeInfo node, int num)
+    {
+        node.num = num;
+        Instantiate(bombVisual, node.transform.position + new Vector3(0f, 0.1144f, 0f), node.transform.rotation, node.transform).GetComponent<BombVisualMove>().SetColor();
         blankNode.Remove(node);
         makeSound.JustPlay();
     }
@@ -77,15 +123,22 @@ public class NodeManager : SingleTon<NodeManager>
         blankNode.Remove(node);
         node.num = num;
         yield return new WaitForSeconds(delay);
-        if (!GameManager.Instance.canMove) yield break;
-        Vector3 pos = node.transform.position + new Vector3(0f, 0.1144f, 0f);
-        VisualMove newNode = Instantiate(visual, pos, node.transform.rotation, node.transform).GetComponent<VisualMove>();
-        newNode.SetColor();
-        makeSound.JustPlay();
-        
-        if (GameManager.Instance.stage)
+        if (removing)
         {
-            CheckClear();
+            node.num = 0;
+            yield break;
+        }
+        else
+        {
+            Vector3 pos = node.transform.position + new Vector3(0f, 0.1144f, 0f);
+            VisualMove newNode = Instantiate(visual, pos, node.transform.rotation, node.transform).GetComponent<VisualMove>();
+            newNode.SetColor();
+            makeSound.JustPlay();
+
+            if (GameManager.Instance.stage)
+            {
+                CheckClear();
+            }
         }
     }
 
@@ -126,6 +179,8 @@ public class NodeManager : SingleTon<NodeManager>
 
     public void MakeNode(float visualDelay = 0, int level = 0)
     {
+        if (blankNode.Count <= 0) return;
+
         int index = Random.Range(0, blankNode.Count);
         if (visualDelay == 0f)
             MakeVisual(blankNode[index], level == 0 ? Random.Range(1, 4) : level);
@@ -167,7 +222,7 @@ public class NodeManager : SingleTon<NodeManager>
             {
                 for(int x = 0; x < node.Count; x++)
                 {
-                    if(node[j].num == node[x].num && j != x && !node[j].neighbor.Contains(node[x]) && node[j].num < 10 && node[x].num < 10)
+                    if(node[j].num == node[x].num && j != x && !node[j].neighbor.Contains(node[x]) && node[j].num < 10 && node[j].num > 0)
                     {
                         return false;
                     }
@@ -206,7 +261,14 @@ public class NodeManager : SingleTon<NodeManager>
     }
     public IEnumerator GameOver()//게임 끝남
     {
-        yield return new WaitForSeconds(3);
+        float time = 0;
+        while(time < 3)
+        {
+            time += Time.deltaTime;
+            if (!GameManager.Instance.canMove) yield break;
+            yield return null;
+        }
+
         if (GameManager.Instance.stage)
         {
             UIManager.Instance.StageFailUIIn();
@@ -231,15 +293,15 @@ public class NodeManager : SingleTon<NodeManager>
         UIManager.Instance.StageUIOut();
         UIManager.Instance.StagePlayUIIn();
         stageIndex = index;
-        StartCoroutine(StartWork(true));
+        StartCoroutine(StartWork(true, (int)stageSO[index].gameMode));
     }
 
-    public void OnClickStart(int gameMode)//메인화면에서 시작버튼 누르면
+    public void OnClickStart()//메인화면에서 시작버튼 누르면
     {
         UIManager.Instance.MainUIOut();
         UIManager.Instance.SelectModeUIOut();
         UIManager.Instance.PlayUIIn();
-        StartCoroutine(StartWork(false, gameMode));
+        StartCoroutine(StartWork(false, PlayerPrefs.GetInt("Mode")));
     }
     public IEnumerator StartWork(bool stage = true, int mode = 0)//시작할 때 할 일들
     {
@@ -250,28 +312,42 @@ public class NodeManager : SingleTon<NodeManager>
         resurvive = false;
         List<NodeInfo> list = new List<NodeInfo>(fullNodes);
         blankNode = new List<NodeInfo>(fullNodes);
+
+        OnEndMove = null;
+        OnEndMove += modes[mode].EndMove;
+        OnStartMode = null;
+        OnStartMode += modes[mode].StartMove;
+        modes[mode].Init();
+        currentMode = modes[mode];
+
         if (stage)
         {
-            for (int i = 0; i < stageSO[stageIndex].startFormat.Count; i++)
+            for (int i = 0; i < stageSO[stageIndex].startFormat.Count; i++)//지정한 값대로 생성
             {
                 int index = stageSO[stageIndex].startFormat[i].blockNum;
-                MakeVisual(list[index], stageSO[stageIndex].startFormat[i].spawnLevel);
+                if (stageSO[stageIndex].startFormat[i].bomb)
+                    MakeBombVisual(list[index], stageSO[stageIndex].startFormat[i].spawnLevel);
+                else
+                    MakeVisual(list[index], stageSO[stageIndex].startFormat[i].spawnLevel);
                 list[index] = null;
             }
-            int ind = 0;
+
+            int ind = 0;//생성했던 곳 리스트에서 지우기
             while (ind < list.Count)
             {
                 if (list[ind] == null) list.RemoveAt(ind);
                 else ind++;
             }
-            int leftSpawn = stageSO[stageIndex].startNodeCount - stageSO[stageIndex].startFormat.Count;
+
+            int leftSpawn = stageSO[stageIndex].startNodeCount - stageSO[stageIndex].startFormat.Count;//남은 생성 수
             for(int i = 0; i < leftSpawn; i++)
             {
                 int index = Random.Range(0, list.Count);
                 MakeVisual(list[index], Random.Range(1, 4));
                 list.RemoveAt(index);
             }
-            targetText.text = "";
+
+            targetText.text = "";//UI로 목표 안내
             for(int i = 0; i < stageSO[stageIndex].clearTarget.Count; i++)
             {
                 targetText.text += $"level {stageSO[stageIndex].clearTarget[i].nodeLevel} no.{stageSO[stageIndex].clearTarget[i].count}\n";
@@ -279,19 +355,15 @@ public class NodeManager : SingleTon<NodeManager>
         }
         else
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 7; i++)
             {
                 int index = Random.Range(0, list.Count);
                 MakeVisual(list[index], Random.Range(1, 4));
                 list.RemoveAt(index);
             }
+
+            currentMode.LastSpawn(list, 0);
         }
-        OnEndMove = null;
-        OnEndMove += modes[mode].EndMove;
-        OnStartMode = null;
-        OnStartMode += modes[mode].StartMove;
-        modes[mode].Init();
-        currentMode = modes[mode];
         yield return new WaitForEndOfFrame();
         EndCheck(false);
         yield return new WaitForSeconds(0.6f);
@@ -310,9 +382,9 @@ public class NodeManager : SingleTon<NodeManager>
         }
         for (int i = 0; i < fullNodes.Length; i++)
         {
-            if (fullNodes[i].visualmove != null) 
+            if (fullNodes[i].transform.childCount > 0) 
             {
-                StartCoroutine(fullNodes[i].visualmove.Remove());
+                fullNodes[i].GetComponentInChildren<VisualMove>().Remove();
             }
         }
     }
@@ -320,9 +392,11 @@ public class NodeManager : SingleTon<NodeManager>
     {
         GameManager.Instance.canMove = false;
         yield return new WaitForSeconds(startDelay);
+        removing = true;
         RemoveVisual();
         currentMode.ResetGame();
         yield return new WaitForSeconds(2f);
+        removing = false;
         ResetBlank();
         action?.Invoke();
     }
@@ -361,7 +435,7 @@ public class NodeManager : SingleTon<NodeManager>
                 }
                 if (!blankNode.Contains(fullNodes[i]))
                 {
-                    StartCoroutine(fullNodes[i].visualmove.Remove());
+                    fullNodes[i].visualMove.Remove();
                 }
             }
             SetAllNumToZero();

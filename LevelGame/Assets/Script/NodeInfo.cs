@@ -7,18 +7,22 @@ public class NodeInfo : MonoBehaviour
     public int index;
     public int num = 0;
     public List<NodeInfo> neighbor;
-    [HideInInspector]public VisualMove visualmove;
+    [HideInInspector]public VisualMove visualMove;
     public int blankIndex = 0;
 
     private void Update()
     {
         if(num >= 1 && transform.childCount > 0)
         {
-            if(visualmove == null)visualmove = transform.GetChild(0).GetComponent<VisualMove>();
+            if (visualMove == null)
+            {
+                visualMove = transform.GetChild(0).GetComponent<VisualMove>();
+                GameManager.Instance.ApplyWarning();
+            }
         }
         else
         {
-            visualmove = null;
+            visualMove = null;
         }
     }
 }

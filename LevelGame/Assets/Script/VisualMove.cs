@@ -3,36 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class VisualMove : VisualMoveBase
+public class VisualMove : MonoBehaviour
 {
     public List<Vector3> positions = new List<Vector3>();
     public float speed = 3;
 
-    private MeshRenderer meshRenderer;
-    private LineRenderer lineRenderer;
+    protected MeshRenderer meshRenderer;
+    protected LineRenderer lineRenderer;
 
-    [HideInInspector] public GameObject warning;
+    public GameObject warning;
     public AudioClip clips;
-    private ParticleSystem particle;
+    protected ParticleSystem particle;
     [HideInInspector] public ParticleSystem bombParticle;
-    int value;
+    protected int value;
 
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         lineRenderer = GetComponent<LineRenderer>();
-        warning = transform.GetChild(0).gameObject;
         particle = transform.GetChild(2).GetComponent<ParticleSystem>();
         bombParticle = transform.GetChild(3).GetComponent<ParticleSystem>();
     }
-   /* private void Start()
+    private void Start()
     {
         transform.localScale = Vector3.zero;
         transform.DOScale(new Vector3(1.2f, 0.8f, -1f), 0.3f).SetEase(Ease.OutBack);
         transform.DOScale(new Vector3(1f, 1f, -1f), 0.7f).SetEase(Ease.OutElastic).SetDelay(0.3f);
         lineRenderer.positionCount = 0; // 포인트 개수 설정 (시작점과 끝점)
-    }*/
-    public void SetColor()//자신 칸의 값에 따라 색 바꿈
+    }
+    public void SetColor()
+    {
+        if (this as BombVisualMove)
+        {
+            (this as BombVisualMove).BombSetColor();
+        }
+        else SetColorReal();
+    }
+    protected void SetColorReal()//자신 칸의 값에 따라 색 바꿈
     {
         NodeInfo parentNodeInfo = transform.parent.GetComponent<NodeInfo>();
         value = parentNodeInfo.num;
@@ -124,7 +131,13 @@ public class VisualMove : VisualMoveBase
         #endregion
 
         target.SetColor();
-        target.bombParticle.startColor = NodeManager.Instance.nodeColor[value];
+        int destroyCount = makeNum;
+        if (!(target as BombVisualMove))
+            target.bombParticle.startColor = NodeManager.Instance.nodeColor[value];
+        else
+        {
+            destroyCount = Mathf.Max(0, (target as BombVisualMove).KillNeighbor(target) + makeNum - 2);
+        }
         target.bombParticle.Play();
         if (GameManager.Instance.stage)
         {
@@ -135,15 +148,20 @@ public class VisualMove : VisualMoveBase
         NodeManager.Instance.blankNode.Add(parent);
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         PublicAudio.Instance.merge.Play();
+
+
         float spawnDelay = 0.5f;
-        for (int i = 0; i < makeNum; i++)
+        for (int i = 0; i < destroyCount; i++)
         {
             NodeManager.Instance.MakeNode(spawnDelay, makeLevel);
         }
         NodeManager.Instance.OnEndMove?.Invoke();
         yield return new WaitForEndOfFrame();
-        if(GameManager.Instance.canMove)
+        /*if (GameManager.Instance.canMove)
             NodeManager.Instance.EndCheck(false);
+        else GameManager.Instance.canMove = true;*/
+        GameManager.Instance.canMove = true;
+        NodeManager.Instance.EndCheck(false);
         Destroy(gameObject);
     }
     public void ToReset()
@@ -165,17 +183,39 @@ public class VisualMove : VisualMoveBase
         lineRenderer.GetPositions(x);
         positions = new List<Vector3>(x);
     }
- /*   public IEnumerator Remove()
+    public void Remove(float delay = 1.5f)
+    {
+        StartCoroutine(RemoveCo(delay));
+    }
+    private IEnumerator RemoveCo(float delay)
     {
         NodeInfo parent = transform.parent.GetComponent<NodeInfo>();
-        NodeManager.Instance.blankNode.Add(parent);
-        float delay = Random.Range(0f, 1.5f);
-        yield return new WaitForSeconds(delay);
-        NodeManager.Instance.PopSoundPlay();
         parent.num = 0;
+        float rdelay = Random.Range(0f, delay);
+        yield return new WaitForSeconds(rdelay);
+        NodeManager.Instance.PopSoundPlay();
         transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InElastic);
         yield return new WaitForSeconds(0.5f);
 
+        NodeManager.Instance.blankNode.Add(parent);
         Destroy(gameObject);
-    }*/
+    }
+    public void NoAnimRemove(float t)
+    {
+        StartCoroutine(NARemove(t));
+    }
+    private IEnumerator NARemove(float t)
+    {
+        NodeInfo parent = transform.parent.GetComponent<NodeInfo>();
+        NodeManager.Instance.Score += parent.num;
+        parent.num = 0;
+        yield return new WaitForSeconds(t);
+        NodeManager.Instance.blankNode.Add(parent);
+        Destroy(gameObject);
+    }
+    private void OnDestroy()
+    {
+        transform.DOComplete();
+        StopAllCoroutines();
+    }
 }

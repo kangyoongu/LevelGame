@@ -10,6 +10,7 @@ public class GameManager : SingleTon<GameManager>
 
     bool click = false;
     List<NodeInfo> connects = new List<NodeInfo>();//드래그하면서 연결한 모든 애들
+    List<VisualMove> warnings = new List<VisualMove>();
     [HideInInspector] public bool onOtherNode = true;
     [HideInInspector] public bool canMove = false;
     public int max = 5;
@@ -37,13 +38,17 @@ public class GameManager : SingleTon<GameManager>
         if (!PlayerPrefs.HasKey("Best"))
         {
             PlayerPrefs.SetInt("Best", 0);
-        }
-        if (!PlayerPrefs.HasKey("StageNum"))
-        {
+            PlayerPrefs.SetInt("BlockBest", 0);
+            PlayerPrefs.SetInt("MultiBest", 0);
+            PlayerPrefs.SetInt("BombBest", 0);
             PlayerPrefs.SetInt("StageNum", 0);
+            PlayerPrefs.SetInt("Mode", 0);
         }
-
         Application.targetFrameRate = 90;
+    }
+    private void Start()
+    {
+        UIManager.Instance.RenewalModeIcon();
     }
     void Update()
     {
@@ -65,26 +70,7 @@ public class GameManager : SingleTon<GameManager>
 
     private void EndDrag()
     {
-        if (connects[0].num == 10)
-        {
-            foreach (NodeInfo node in NodeManager.Instance.fullNodes)//10이라서 생긴 warning끄기
-            {
-                if (node.num == 10)
-                {
-                    node.visualmove.warning.SetActive(false);
-                }
-            }
-        }
-        else
-        {
-            foreach (NodeInfo node in connects[0].neighbor)//처음클릭한 노드 주변 warning끄기
-            {
-                if (node.num == connects[0].num && node.visualmove != null)
-                {
-                    node.visualmove.warning.SetActive(false);
-                }
-            }
-        }
+        RemoveWarning();
         click = false;
         if (connects[0].num == connects[connects.Count - 1].num && connects.Count >= 2)
         {
@@ -92,35 +78,60 @@ public class GameManager : SingleTon<GameManager>
         }
         else
         {
-            onOtherNode = true;
-            connects[0].visualmove.ToReset();
+            connects[0].visualMove.ToReset();
         }
+        onOtherNode = true;
     }
 
     private void Merge()
     {
+        canMove = false;
         connects[0].num = 0;
         connects[connects.Count - 1].num++;
         NodeManager.Instance.Score += connects[connects.Count - 1].num;
         int spawnCount = 1;
+        if (NodeManager.Instance.currentMode.CanMultiSelect()) spawnCount++;//멀티머지모드면 생성 2번함
         if (stage) dragCount++;
         if (connects[connects.Count - 1].num > max)//최고기록 갱신하면 하나 더 나옴
         {
             max = connects[connects.Count - 1].num;
-            if (max == 10)
+            if (max == 10)//만들어진게 10이면 폭죽
             {
                 particles[0].SetActive(true);
                 particles[1].SetActive(true);
             }
             spawnCount++;
         }
-        if (stage && spawnNodes.Count > 0 && dragCount == spawnNodes[0].turnCount)
+        if (stage && spawnNodes.Count > 0 && dragCount == spawnNodes[0].turnCount)//스테이지에서 이번턴에 만들어질 애를 지정했으면
         {
-            connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, 1, spawnNodes[0].spawnLevel);
+            if (connects[0].visualMove as BombVisualMove)
+                (connects[0].visualMove as BombVisualMove).Move(connects[connects.Count - 1].visualMove, 1, spawnNodes[0].spawnLevel);
+            else
+                connects[0].visualMove.Move(connects[connects.Count - 1].visualMove, 1, spawnNodes[0].spawnLevel);
+            for (int i = 1; i < connects.Count-1; i++)
+            {
+                if(connects[i].num == connects[connects.Count-1].num-1)
+                {
+                    connects[i].visualMove.NoAnimRemove(connects[i].visualMove.speed * i);
+                }
+            }
             spawnNodes.RemoveAt(0);
         }
         else
-            connects[0].visualmove.Move(connects[connects.Count - 1].visualmove, spawnCount, 0);
+        {
+            if(connects[0].visualMove as BombVisualMove)
+                (connects[0].visualMove as BombVisualMove).Move(connects[connects.Count - 1].visualMove, spawnCount, 0);
+            else
+                connects[0].visualMove.Move(connects[connects.Count - 1].visualMove, spawnCount, 0);
+
+            for (int i = 1; i < connects.Count - 1; i++)
+            {
+                if (connects[i].num == connects[connects.Count - 1].num-1)
+                {
+                    connects[i].visualMove.NoAnimRemove(connects[i].visualMove.speed * i);
+                }
+            }
+        }
     }
 
     private void OnMouseClick()
@@ -140,77 +151,59 @@ public class GameManager : SingleTon<GameManager>
 
                 if (touch.phase == TouchPhase.Began)//첫클릭이면
                 {
-                    if (clicked.num >= 1 && clicked.visualmove != null)//node 숫자가 1이상이면(그 자리에 뭐가 있으면)
+                    if (clicked.num >= 1 && clicked.visualMove != null)//node 숫자가 1이상이면(그 자리에 뭐가 있으면)
                     {
-                        if (connects.Count > 0 && connects[0].num > 0 && connects[0].visualmove != null)//뭔가 막 버그가 나는걸 막아줌 
+                        if (connects.Count > 0 && connects[0].num > 0 && connects[0].visualMove != null)//뭔가 막 버그가 나는걸 막아줌 
                         {
-                            connects[0].visualmove.ToReset();
-                            foreach (NodeInfo node in connects[0].neighbor)
+                            connects[0].visualMove.ToReset();
+                            /*foreach (NodeInfo node in connects[0].neighbor)
                             {
                                 if (node.num == connects[0].num && node.visualmove != null)
                                 {
                                     node.visualmove.warning.SetActive(false);
                                 }
-                            }
+                            }*/
                         }
                         connects = new List<NodeInfo>();
                         connects.Add(clicked);
-                        connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
+                        connects[0].visualMove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
                         click = true;
-                        if (connects[0].num == 10)
-                        {
-                            foreach (NodeInfo node in NodeManager.Instance.fullNodes)
-                            {
-                                if (node.num == 10 && node != clicked)
-                                {
-                                    node.visualmove.warning.SetActive(true);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (connects.Count > 0 && connects[0].num > 0)
-                            {
-                                foreach (NodeInfo node in connects[0].neighbor)
-                                {
-                                    if (node.num == connects[0].num && node.visualmove != null)
-                                    {
-                                        node.visualmove.warning.SetActive(true);
-                                    }
-                                }
-                            }
-                        }
+                        ApplyWarning();
                     }
                 }
                 else
                 {
-                    if (click)
+                    if (!click) return;
+
+                    if (connects.Contains(clicked))//이미 지나간길에 가면
                     {
-                        if (connects.Contains(clicked))//이미 지나간길에 가면
+                        if (connects[connects.Count - 1] != clicked)//제자리도 아니면(지나간 선 밟으면 그 뒤 끊어낸다)
                         {
-                            if (connects[connects.Count - 1] != clicked)//제자리도 아니면(지나간 선 밟으면 그 뒤 끊어낸다)
-                            {
-                                int index = connects.IndexOf(clicked) + 1;
-                                connects[0].visualmove.CutUp(index);
-                                int countToRemove = connects.Count - index;
-                                connects.RemoveRange(index, countToRemove);
-                                onOtherNode = true;
-                            }
+                            int index = connects.IndexOf(clicked) + 1;
+                            connects[0].visualMove.CutUp(index);
+                            int countToRemove = connects.Count - index;
+                            connects.RemoveRange(index, countToRemove);
+                            onOtherNode = true;
+                            ApplyWarning();
                         }
-                        else if (connects[connects.Count - 1].neighbor.Contains(clicked) && onOtherNode == true)//새로운 길에 가면
+                    }
+                    else if (connects[connects.Count - 1].neighbor.Contains(clicked) && onOtherNode == true)//새로운 길에 가면
+                    {
+                        if (NodeManager.Instance.currentMode.CanDrag(connects[connects.Count - 1], clicked))
                         {
-                            if (NodeManager.Instance.currentMode.CanDrag(connects[connects.Count - 1], clicked))
+                            if (clicked.num <= 0)//빈칸이면
                             {
-                                if (clicked.num <= 0)
+                                connects.Add(clicked);
+                                connects[0].visualMove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
+                            }//시작숫자랑 같은애면
+                            else if (clicked.num == connects[0].num && connects[0].num < 10 && clicked.visualMove != null && clicked.visualMove.warning.activeSelf == false)//이웃은 안합쳐지게
+                            {
+                                connects.Add(clicked);
+                                connects[0].visualMove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
+                                onOtherNode = NodeManager.Instance.currentMode.CanMultiSelect();
+                                if (NodeManager.Instance.currentMode.CanMultiSelect())
                                 {
-                                    connects.Add(clicked);
-                                    connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
-                                }
-                                else if (clicked.num == connects[0].num && !connects[0].neighbor.Contains(clicked) && connects[0].num < 10 && clicked.visualmove != null)//이웃은 안합쳐지게
-                                {
-                                    connects.Add(clicked);
-                                    connects[0].visualmove.AddPosition(clicked.transform.position + new Vector3(0, 0.06f, 0));
-                                    onOtherNode = false;
+                                    ApplyWarning();
                                 }
                             }
                         }
@@ -218,6 +211,44 @@ public class GameManager : SingleTon<GameManager>
                 }
             }
         }
+    }
+    public void ApplyWarning()
+    {
+        if (click)
+        {
+            RemoveWarning();
+            for (int i = 0; i < connects.Count; i++)
+            {
+                for (int j = 0; j < connects[i].neighbor.Count; j++)
+                {
+                    if (connects[i].num == connects[i].neighbor[j].num && connects[i].neighbor[j].visualMove != null && connects[i].neighbor[j].visualMove.warning.activeSelf == false)
+                    {
+                        warnings.Add(connects[i].neighbor[j].visualMove);
+                        connects[i].neighbor[j].visualMove.warning.SetActive(true);
+                    }
+                }
+            }
+            if (connects.Count > 0 && connects[0].num == 10)
+            {
+                foreach (NodeInfo node in NodeManager.Instance.fullNodes)
+                {
+                    if (node.num == 10)
+                    {
+                        warnings.Add(node.visualMove);
+                        node.visualMove.warning.SetActive(true);
+                    }
+                }
+            }
+        }
+    }
+    private void RemoveWarning()
+    {
+        for(int i = 0; i < warnings.Count; i++)
+        {
+            if(warnings[i] != null)
+                warnings[i].warning.SetActive(false);
+        }
+        warnings = new List<VisualMove>();
     }
     public bool IsPointerOverUIObject(Vector2 touchPos)
     {
@@ -239,6 +270,8 @@ public class GameManager : SingleTon<GameManager>
         this.stage = stage;
         this.mode = mode;
         dragCount = 0;
+        connects = new List<NodeInfo>();
+        RemoveWarning();
         if (stage)
         {
             spawnNodes = new List<SpawnNode>(so.spawnNode);
