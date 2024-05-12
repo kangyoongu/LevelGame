@@ -12,19 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ee43c6fcaba87439e01c8ffb735b68, type: 3}
   m_Name: StageTest 1
   m_EditorClassIdentifier: 
+  gameMode: 0
   clearTarget:
   - nodeLevel: 5
-    count: 6
+    count: 1
   startFormat:
   - blockNum: 1
     spawnLevel: 1
+    bomb: 0
   - blockNum: 2
     spawnLevel: 1
+    bomb: 0
   - blockNum: 3
     spawnLevel: 1
+    bomb: 0
   - blockNum: 4
     spawnLevel: 1
-  startNodeCount: 18
+    bomb: 0
+  startNodeCount: 7
   spawnNode:
   - turnCount: 1
     spawnLevel: 1

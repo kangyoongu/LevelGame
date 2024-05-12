@@ -22,6 +22,12 @@ public class GameManager : SingleTon<GameManager>
     [HideInInspector] public int mode = 0;
     int dragCount;
     List<SpawnNode> spawnNodes;
+
+    [SerializeField] int unlockWall;
+    [SerializeField] int unlockMultiSelect;
+    [SerializeField] int unlockBoom;
+    [SerializeField] GameObject[] locks;
+
     public int StageNum {
         get
         {
@@ -30,11 +36,20 @@ public class GameManager : SingleTon<GameManager>
         set
         {
             PlayerPrefs.SetInt("StageNum", value);
+
+            if (value >= unlockWall)
+                locks[0].SetActive(false);
+            if (value >= unlockMultiSelect)
+                locks[1].SetActive(false);
+            if (value >= unlockBoom)
+                locks[2].SetActive(false);
+
             StageSetter.setButton?.Invoke();
         }
     }
     public void Awake()
     {
+        Application.targetFrameRate = 90;
         if (!PlayerPrefs.HasKey("Best"))
         {
             PlayerPrefs.SetInt("Best", 0);
@@ -44,7 +59,7 @@ public class GameManager : SingleTon<GameManager>
             PlayerPrefs.SetInt("StageNum", 0);
             PlayerPrefs.SetInt("Mode", 0);
         }
-        Application.targetFrameRate = 90;
+        StageNum = StageNum;
     }
     private void Start()
     {
