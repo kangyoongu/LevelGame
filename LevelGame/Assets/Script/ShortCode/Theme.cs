@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Theme : MonoBehaviour
 {
     public int price;
+    public TextMeshProUGUI priceText;
     public int num;
-
     Transform parent;
     private void Start()
     {
         parent = transform.parent;
         GetComponent<Button>().onClick.AddListener(OnClickBuy);
+        priceText.text = price.ToString();
     }
     public void OnClickBuy()
     {
@@ -29,12 +31,18 @@ public class Theme : MonoBehaviour
 
     private void Buy()
     {
-        PlayerPrefs.SetInt("Theme" + num, 1);
-        Whear();
+        if (QuestManager.Instance.Coin >= price)
+        {
+            QuestManager.Instance.Coin -= price;
+            PublicAudio.Instance.click.Play();
+            PlayerPrefs.SetInt("Theme" + num, 1);
+            Whear();
+        }
     }
 
     private void Whear()
     {
+        PublicAudio.Instance.click.Play();
         PlayerPrefs.SetInt("Whear", num);
         ThemeManager.Instance.ApplyChange();
     }

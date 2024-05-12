@@ -5,4 +5,5 @@ using UnityEngine;
 public class PublicAudio : SingleTon<PublicAudio>
 {
     public AudioSource merge;
+    public AudioSource click;
 }

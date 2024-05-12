@@ -7,6 +7,8 @@ public class ThemeData : ScriptableObject
 {
     public Color[] blockColor;
     public Material material;
+    public Sprite[] sprites;
+    public Sprite blockImage;
     public Color backgroundColor;
     public Color blankColor;
     public Color play;

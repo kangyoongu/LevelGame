@@ -42,6 +42,8 @@ public class UIManager : SingleTon<UIManager>
     public RectTransform selectModeUI;
     public UI[] stageClearUI;
     public UI[] stageFailUI;
+    public UI[] questUI;
+    public UI[] coinShopUI;
 
     bool digree = false;
     public RectTransform digreePack;
@@ -61,6 +63,9 @@ public class UIManager : SingleTon<UIManager>
     public GameObject ad;
 
     public GameObject[] modeIcons;
+
+    public Image[] targetImages;
+    public TextMeshProUGUI[] targetTexts;
     private void Awake()
     {
         //PlayerPrefs.DeleteAll();
@@ -129,6 +134,10 @@ public class UIManager : SingleTon<UIManager>
     public void StageClearUIOut() => Out(stageClearUI);
     public void StageFailUIIn() => In(stageFailUI);
     public void StageFailUIOut() => Out(stageFailUI);
+    public void QuestUIIn() => In(questUI);
+    public void QuestUIOut() => Out(questUI);
+    public void CoinShopUIIn() => In(coinShopUI);
+    public void CoinShopUIOut() => Out(coinShopUI);
     private void In(UI[] lst)
     {
         block[0].SetActive(true);

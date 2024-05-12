@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,17 +7,18 @@ using UnityEngine.UI;
 
 public class ThemeManager : SingleTon<ThemeManager>
 {
-    public Camera background;
     public SpriteRenderer[] blanks;
     public Image[] play;
+    public Image[] background;
     public Image[] rank;
     public Image[] sound;
     public Image[] store;
     public Image[] setting;
     public Image[] scoreBack;
     public Image[] icons;
-    public TextMeshProUGUI[] scores;
-    
+    public TextMeshProUGUI[] scoresText;
+    public TextMeshProUGUI[] blackText;
+
     public ThemeData[] everyTheme;
     public Image[] pedigree;
     public Image[] pedigreeIcon;
@@ -25,17 +27,20 @@ public class ThemeManager : SingleTon<ThemeManager>
     public Image[] ad;
     public Image[] heart;
     public Image x;
-    public Transform[] buys;
+    public Transform[] themes;
     public Transform get;
     public Transform sell;
+
+    public Action OnChangeTheme;
+    public ThemeData CurrentTheme => everyTheme[PlayerPrefs.GetInt("Whear")];
     private void Start()
     {
         if (!PlayerPrefs.HasKey("Whear"))
         {
             PlayerPrefs.SetInt("Whear", 0);
-            for (int i = 0; i < buys.Length; i++)
+            for (int i = 0; i < themes.Length; i++)
             {
-                if (i < 3)
+                if (i < 1)
                 {
                     PlayerPrefs.SetInt("Theme" + i, 1);
                 }
@@ -50,47 +55,46 @@ public class ThemeManager : SingleTon<ThemeManager>
 
     public void ApplyChange()
     {
-        for (int i = 0; i < buys.Length; i++)
+        for (int i = 0; i < themes.Length; i++)
         {
-            /*if (PlayerPrefs.GetInt("Theme" + i) == 0)
+            if (PlayerPrefs.GetInt("Theme" + i) == 0)
             {
-                buys[i].SetParent(sell);
-                buys[i].SetAsLastSibling();
-                buys[i].GetChild(0).GetChild(1).gameObject.SetActive(true);
+                themes[i].SetParent(sell);
+                themes[i].SetAsLastSibling();
+                themes[i].GetChild(0).GetChild(1).gameObject.SetActive(true);
             }
             else
             {
-                buys[i].SetParent(get);
-                buys[i].SetAsLastSibling();
-                buys[i].GetChild(0).GetChild(1).gameObject.SetActive(false);
-            }*/
-            if (i > 0)
-            {
-                buys[i].SetParent(sell);
-                buys[i].SetAsLastSibling();
+                themes[i].SetParent(get);
+                themes[i].SetAsLastSibling();
+                themes[i].GetChild(0).GetChild(1).gameObject.SetActive(false);
             }
-            buys[i].GetChild(0).GetChild(1).gameObject.SetActive(false);//원래 주석
+            /*if (i > 0)
+            {
+                themes[i].SetParent(sell);
+                themes[i].SetAsLastSibling();
+            }
+            themes[i].GetChild(0).GetChild(1).gameObject.SetActive(false);*/
             if (PlayerPrefs.GetInt("Whear") == i)
             {
-                buys[i].GetChild(0).GetChild(0).gameObject.SetActive(true);
+                themes[i].GetChild(0).GetChild(0).gameObject.SetActive(true);
                 ApplyTheme(everyTheme[i]);
             }
             else
             {
-                buys[i].GetChild(0).GetChild(0).gameObject.SetActive(false);
+                themes[i].GetChild(0).GetChild(0).gameObject.SetActive(false);
             }
         }
     }
 
     public void ApplyTheme(ThemeData theme)
     {
-        background.backgroundColor = theme.backgroundColor;
         NodeManager.Instance.nodeColor = theme.blockColor;
         NodeManager.Instance.currentMat = theme.material;
         NodeManager.Instance.warningColor = theme.warning;
+        OnChangeTheme?.Invoke();
 
-
-        foreach(NodeInfo node in NodeManager.Instance.fullNodes)
+        foreach (NodeInfo node in NodeManager.Instance.fullNodes)
         {
             if(node.visualMove != null)
             {
@@ -98,22 +102,30 @@ public class ThemeManager : SingleTon<ThemeManager>
             }
         }
 
-       /* for(int i = 0; i < pedigree.Length; i++)
+        for(int i = 0; i < pedigree.Length; i++)
         {
             pedigree[i].color = theme.blockColor[i];
-            pedigree[i].transform.GetChild(0).GetComponent<MeshRenderer>().material = theme.material;
+            pedigree[i].sprite = theme.blockImage;
+            pedigree[i].transform.GetChild(0).GetComponent<Image>().sprite = theme.sprites[i];
         }
         for(int i = 0; i < pedigreeIcon.Length; i++)
         {
             pedigreeIcon[i].color = theme.blockColor[i+1];
-            pedigreeIcon[i].transform.GetChild(0).GetComponent<MeshRenderer>().material = theme.material;
-        }*/
+            pedigreeIcon[i].sprite = theme.blockImage;
+            pedigreeIcon[i].transform.GetChild(0).GetComponent<Image>().sprite = theme.sprites[i];
+        }
 
        /* foreach(SpriteRenderer sr in blanks)
         {
             sr.color = theme.blankColor;
         }*/
-        foreach(Image image in play)
+        foreach(Image image in background)
+        {
+            float alpha = image.color.a;
+            image.color = theme.backgroundColor;
+            image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
+        }
+        foreach (Image image in play)
         {
             image.color = theme.play;
         }
@@ -141,9 +153,13 @@ public class ThemeManager : SingleTon<ThemeManager>
         {
             image.color = theme.icons;
         }
-        foreach(TextMeshProUGUI text in scores)
+        foreach(TextMeshProUGUI text in scoresText)
         {
             text.color = theme.icons;
+        }
+        foreach (TextMeshProUGUI text in blackText)
+        {
+            text.color = new Color(theme.scoreBack.r, theme.scoreBack.g, theme.scoreBack.b, text.color.a);
         }
         pedigreeBackground.color = theme.pedigreeBackground;
         x.color = theme.x;

@@ -23,7 +23,8 @@ MonoBehaviour:
   - {r: 0.3019608, g: 0.3019608, b: 0.3019608, a: 1}
   - {r: 0.20000002, g: 0.20000002, b: 0.20000002, a: 1}
   - {r: 0, g: 0, b: 0, a: 1}
-  blockSprite:
+  material: {fileID: 2100000, guid: a22215128da9c7d4ca8b4b8e93b58f04, type: 2}
+  sprites:
   - {fileID: 21300000, guid: 8cb1aee17298f664c870e9a42a893fdd, type: 3}
   - {fileID: 21300000, guid: 05eb5d4a2ef38714c846efe2a4cc0aa6, type: 3}
   - {fileID: 21300000, guid: 061dce4208c84bf42a532218b95d1ae6, type: 3}
@@ -34,14 +35,15 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0180a365dede877438583a95dff06b58, type: 3}
   - {fileID: 21300000, guid: 1659a74583ea0fe45a62f28f6152bdd6, type: 3}
   - {fileID: 21300000, guid: a1999bee02f64a44fb5488b6a26c4bac, type: 3}
+  blockImage: {fileID: 21300000, guid: 47ddce76d84f48c4c8245da5512606e3, type: 3}
   backgroundColor: {r: 0.9803922, g: 0.9803922, b: 0.9803922, a: 1}
   blankColor: {r: 0.7372549, g: 0.7372549, b: 0.7372549, a: 1}
   play: {r: 0, g: 0, b: 0, a: 1}
   rank: {r: 0.3019608, g: 0.3019608, b: 0.3019608, a: 1}
   sound: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
   store: {r: 0.7019608, g: 0.7019608, b: 0.7019608, a: 1}
-  setting: {r: 0.15294118, g: 0.15294118, b: 0.1137255, a: 1}
-  scoreBack: {r: 0.15294118, g: 0.15294118, b: 0.1137255, a: 1}
+  setting: {r: 0.5566038, g: 0.5566038, b: 0.54960245, a: 1}
+  scoreBack: {r: 0.18867922, g: 0.18867922, b: 0.161386, a: 1}
   icons: {r: 1, g: 1, b: 1, a: 1}
   warning: {r: 0.654902, g: 0.654902, b: 0.654902, a: 1}
   pedigreeBackground: {r: 0.15294118, g: 0.15294118, b: 0.1137255, a: 1}

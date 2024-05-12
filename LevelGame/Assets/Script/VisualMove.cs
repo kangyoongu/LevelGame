@@ -8,7 +8,7 @@ public class VisualMove : MonoBehaviour
     public List<Vector3> positions = new List<Vector3>();
     public float speed = 3;
 
-    protected MeshRenderer meshRenderer;
+    [HideInInspector]public MeshRenderer meshRenderer;
     protected LineRenderer lineRenderer;
 
     public GameObject warning;
@@ -17,18 +17,20 @@ public class VisualMove : MonoBehaviour
     [HideInInspector] public ParticleSystem bombParticle;
     protected int value;
 
+    protected SpriteRenderer icon;
     private void Awake()
     {
-        meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
         lineRenderer = GetComponent<LineRenderer>();
-        particle = transform.GetChild(2).GetComponent<ParticleSystem>();
-        bombParticle = transform.GetChild(3).GetComponent<ParticleSystem>();
+        icon = transform.GetChild(0).GetChild(1).GetComponent<SpriteRenderer>();
+        particle = transform.GetChild(0).GetChild(2).GetComponent<ParticleSystem>();
+        bombParticle = transform.GetChild(0).GetChild(3).GetComponent<ParticleSystem>();
     }
     private void Start()
     {
         transform.localScale = Vector3.zero;
-        transform.DOScale(new Vector3(1.2f, 0.8f, -1f), 0.3f).SetEase(Ease.OutBack);
-        transform.DOScale(new Vector3(1f, 1f, -1f), 0.7f).SetEase(Ease.OutElastic).SetDelay(0.3f);
+        transform.DOScale(new Vector3(1.2f, 0.8f, 1f), 0.3f).SetEase(Ease.OutBack);
+        transform.DOScale(Vector3.one, 0.7f).SetEase(Ease.OutElastic).SetDelay(0.3f);
         lineRenderer.positionCount = 0; // 포인트 개수 설정 (시작점과 끝점)
     }
     public void SetColor()
@@ -48,7 +50,7 @@ public class VisualMove : MonoBehaviour
         {
             meshRenderer.material = NodeManager.Instance.currentMat;
         }
-        //transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = NodeManager.instance.inside[value - 1];
+        icon.sprite = ThemeManager.Instance.CurrentTheme.sprites[value - 1];
         Color color = NodeManager.Instance.nodeColor[value-1];
         meshRenderer.material.color = color;
         warning.GetComponent<SpriteRenderer>().color = NodeManager.Instance.warningColor;
@@ -104,13 +106,15 @@ public class VisualMove : MonoBehaviour
         }
         angle /= 60;
         angle = Mathf.Round(angle);
-        transform.localRotation = Quaternion.Euler(0, 0, angle * -60);
-        target.transform.localRotation = Quaternion.Euler(0, 0, angle * -60);
+        transform.localRotation = Quaternion.Euler(0, 0, angle * 60f);
+        meshRenderer.transform.localRotation = Quaternion.Euler(0, 0, -angle * 60f);
+        target.transform.localRotation = Quaternion.Euler(0, 0, angle * 60f);
+        target.meshRenderer.transform.localRotation = Quaternion.Euler(0, 0, -angle * 60f);
         transform.DOMove(positions[positions.Count - 1] + transform.right * 0.25f, 0.6f).SetEase(Ease.OutQuad);
-        transform.DOScale(new Vector3(0.7f, 1.1f, -1f), 0.6f).SetEase(Ease.OutQuad);
+        transform.DOScale(new Vector3(0.7f, 1.1f, 1f), 0.6f).SetEase(Ease.OutQuad);
         Vector3 targetPos = target.transform.position;
         target.transform.DOMove(target.transform.position + target.transform.right * -0.3f, 0.6f).SetEase(Ease.OutQuad);
-        target.transform.DOScale(new Vector3(0.7f, 1.1f, -1f), 0.6f).SetEase(Ease.OutQuad);
+        target.transform.DOScale(new Vector3(0.7f, 1.1f, 1f), 0.6f).SetEase(Ease.OutQuad);
         yield return new WaitForSeconds(0.6f * 0.27f);
         lineRenderer.positionCount = 0;
         yield return new WaitForSeconds(0.6f * 0.73f);
@@ -121,23 +125,24 @@ public class VisualMove : MonoBehaviour
             yield break;
         }//이거 되는 중간에 다시하기 하면 생기는 버그 방지
         target.transform.position = targetPos;
-        target.transform.localScale = new Vector3(1.2f, 1f, -1f);
-        target.transform.DOScale(new Vector3(1.5f, 1.1f, -1f), 0.1f).SetEase(Ease.OutCubic);
-        target.transform.DOScale(new Vector3(0.8f, 1.3f, -1f), 0.1f).SetEase(Ease.OutCubic).SetDelay(0.1f);
-        target.transform.DOScale(new Vector3(1f, 1f, -1f), 0.6f).SetEase(Ease.OutElastic).SetDelay(0.2f);
+        target.transform.localScale = new Vector3(1.2f, 1f, 1f);
+        target.transform.DOScale(new Vector3(1.5f, 1.1f, 1f), 0.1f).SetEase(Ease.OutCubic);
+        target.transform.DOScale(new Vector3(0.8f, 1.3f, 1f), 0.1f).SetEase(Ease.OutCubic).SetDelay(0.1f);
+        target.transform.DOScale(Vector3.one, 0.6f).SetEase(Ease.OutElastic).SetDelay(0.2f);
         particle.transform.parent = null;
         particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         ToReset();
         #endregion
 
-        target.SetColor();
         int destroyCount = makeNum;
         if (!(target as BombVisualMove))
             target.bombParticle.startColor = NodeManager.Instance.nodeColor[value];
         else
         {
             destroyCount = Mathf.Max(0, (target as BombVisualMove).KillNeighbor(target) + makeNum - 2);
+            value++;
         }
+        target.SetColor();
         target.bombParticle.Play();
         if (GameManager.Instance.stage)
         {
@@ -146,7 +151,7 @@ public class VisualMove : MonoBehaviour
 
         NodeInfo parent = GetComponentInParent<NodeInfo>();
         NodeManager.Instance.blankNode.Add(parent);
-        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        meshRenderer.enabled = false;
         PublicAudio.Instance.merge.Play();
 
 

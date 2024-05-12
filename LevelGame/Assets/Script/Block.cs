@@ -16,7 +16,7 @@ public class Block : MonoBehaviour
     }
     public void Enable()
     {
-        transform.DOScaleY(2f, time).SetEase(Ease.OutBack);
+        transform.DOScaleY(2.5f, time).SetEase(Ease.OutBack);
     }
     public void Disable()
     {

@@ -13,6 +13,10 @@ public class BombVisualMove : VisualMove
         }
         Color color = Color.black;
         meshRenderer.material.color = color;
+        NodeInfo parentNodeInfo = transform.parent.GetComponent<NodeInfo>();
+        if(parentNodeInfo.num != 0)
+            value = parentNodeInfo.num;
+        icon.sprite = ThemeManager.Instance.CurrentTheme.sprites[value - 1];
         warning.GetComponent<SpriteRenderer>().color = NodeManager.Instance.warningColor;
         Gradient gradient = new Gradient();
         GradientColorKey[] colorKeys = new GradientColorKey[1];
@@ -63,13 +67,15 @@ public class BombVisualMove : VisualMove
         }
         angle /= 60;
         angle = Mathf.Round(angle);
-        transform.localRotation = Quaternion.Euler(0, 0, angle * -60);
-        target.transform.localRotation = Quaternion.Euler(0, 0, angle * -60);
+        transform.localRotation = Quaternion.Euler(0, 0, angle * 60f);
+        meshRenderer.transform.localRotation = Quaternion.Euler(0, 0, -angle * 60f);
+        target.transform.localRotation = Quaternion.Euler(0, 0, angle * 60f);
+        target.meshRenderer.transform.localRotation = Quaternion.Euler(0, 0, -angle * 60f);
         transform.DOMove(positions[positions.Count - 1] + transform.right * 0.25f, 0.6f).SetEase(Ease.OutQuad);
-        transform.DOScale(new Vector3(0.7f, 1.1f, -1f), 0.6f).SetEase(Ease.OutQuad);
+        transform.DOScale(new Vector3(0.7f, 1.1f, 1f), 0.6f).SetEase(Ease.OutQuad);
         Vector3 targetPos = target.transform.position;
         target.transform.DOMove(target.transform.position + target.transform.right * -0.3f, 0.6f).SetEase(Ease.OutQuad);
-        target.transform.DOScale(new Vector3(0.7f, 1.1f, -1f), 0.6f).SetEase(Ease.OutQuad);
+        target.transform.DOScale(new Vector3(0.7f, 1.1f, 1f), 0.6f).SetEase(Ease.OutQuad);
         yield return new WaitForSeconds(0.6f * 0.27f);
         lineRenderer.positionCount = 0;
         yield return new WaitForSeconds(0.6f * 0.73f);
@@ -80,24 +86,25 @@ public class BombVisualMove : VisualMove
             yield break;
         }//이거 되는 중간에 다시하기 하면 생기는 버그 방지
         transform.position = targetPos;
-        transform.localScale = new Vector3(1.2f, 1f, -1f);
-        transform.DOScale(new Vector3(1.5f, 1.1f, -1f), 0.1f).SetEase(Ease.OutCubic);
-        transform.DOScale(new Vector3(0.8f, 1.3f, -1f), 0.1f).SetEase(Ease.OutCubic).SetDelay(0.1f);
-        transform.DOScale(new Vector3(1f, 1f, -1f), 0.6f).SetEase(Ease.OutElastic).SetDelay(0.2f);
+        transform.localScale = new Vector3(1.2f, 1f, 1f);
+        transform.DOScale(new Vector3(1.5f, 1.1f, 1f), 0.1f).SetEase(Ease.OutCubic);
+        transform.DOScale(new Vector3(0.8f, 1.3f, 1f), 0.1f).SetEase(Ease.OutCubic).SetDelay(0.1f);
+        transform.DOScale(Vector3.one, 0.6f).SetEase(Ease.OutElastic).SetDelay(0.2f);
         particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         ToReset();
         #endregion
 
-        SetColor();
+        NodeInfo parent = GetComponentInParent<NodeInfo>();
+        value = target.gameObject.GetComponentInParent<NodeInfo>().num;
         bombParticle.Play();
         if (GameManager.Instance.stage)
         {
             NodeManager.Instance.CheckClear();
         }
 
-        NodeInfo parent = GetComponentInParent<NodeInfo>();
+        SetColor();
         NodeManager.Instance.blankNode.Add(parent);
-        target.gameObject.GetComponent<MeshRenderer>().enabled = false;
+        target.meshRenderer.enabled = false;
         PublicAudio.Instance.merge.Play();
         int destroyCount = Mathf.Max(0, KillNeighbor(target)+makeNum - 2);
         float spawnDelay = 0.5f;
@@ -124,7 +131,7 @@ public class BombVisualMove : VisualMove
         {
             if (node.num > 0)
             {
-                node.visualMove.Remove(0.3f);
+                node.visualMove.Remove(0f);
                 popCount++;
             }
         }

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7323278857278882171}
   - component: {fileID: 2459090665810064151}
   - component: {fileID: -279381916350436731}
+  - component: {fileID: 8877833704113982820}
   m_Layer: 5
   m_Name: StageButton
   m_TagString: Untagged
@@ -62,14 +63,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.98823535, g: 0.7372549, b: 0.2509804, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 5c421c38ec077494cb1e0cd59ee54a8a, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -78,7 +79,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.2
+  m_PixelsPerUnitMultiplier: 2.47
 --- !u!114 &2459090665810064151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,6 +136,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093987b3aee05da4ba1d11e956cdd7e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8877833704113982820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4226439071341519648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31fae85b25f411145ad65b862581035f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  setting: []
+  play:
+  - {fileID: 7323278857278882171}
+  whiteText:
+  - {fileID: 9049310006624175251}
+  gray:
+  - {fileID: 7655379738446787153}
 --- !u!1 &8017765849713127493
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,7 +230,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4282006074
-  m_fontColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

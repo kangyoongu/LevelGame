@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class NodeManager : SingleTon<NodeManager>
@@ -15,7 +16,6 @@ public class NodeManager : SingleTon<NodeManager>
     public Color[] nodeColor;
     public TextMeshProUGUI[] bestText;
     public TextMeshProUGUI[] currentText;
-    public TextMeshProUGUI targetText;
     int[] clearTargets;
     bool resurvive = false;
     bool removing = false;//플레이하다가 다시하기누르면 막 생기면서 난리치는거 방지
@@ -30,9 +30,13 @@ public class NodeManager : SingleTon<NodeManager>
     public StageSettingSO[] stageSO;
     public GameObject[] modeObject;
     IMode[] modes;
+    [HideInInspector]public int currentModeIndex;
     public IMode currentMode;
     public Action OnStartMode;
     public Action OnEndMove;
+
+    public delegate void IntAction(int value);
+    public IntAction OnSetStageMode;
 
     Coroutine delayMakeVisual;
     private int score = 0;
@@ -293,6 +297,7 @@ public class NodeManager : SingleTon<NodeManager>
         UIManager.Instance.StageUIOut();
         UIManager.Instance.StagePlayUIIn();
         stageIndex = index;
+        OnSetStageMode?.Invoke((int)stageSO[index].gameMode);
         StartCoroutine(StartWork(true, (int)stageSO[index].gameMode));
     }
 
@@ -319,6 +324,7 @@ public class NodeManager : SingleTon<NodeManager>
         OnStartMode += modes[mode].StartMove;
         modes[mode].Init();
         currentMode = modes[mode];
+        currentModeIndex = mode;
 
         if (stage)
         {
@@ -340,18 +346,14 @@ public class NodeManager : SingleTon<NodeManager>
             }
 
             int leftSpawn = stageSO[stageIndex].startNodeCount - stageSO[stageIndex].startFormat.Count;//남은 생성 수
-            for(int i = 0; i < leftSpawn; i++)
+            for (int i = 0; i < leftSpawn; i++)
             {
                 int index = Random.Range(0, list.Count);
                 MakeVisual(list[index], Random.Range(1, 4));
                 list.RemoveAt(index);
             }
 
-            targetText.text = "";//UI로 목표 안내
-            for(int i = 0; i < stageSO[stageIndex].clearTarget.Count; i++)
-            {
-                targetText.text += $"level {stageSO[stageIndex].clearTarget[i].nodeLevel} no.{stageSO[stageIndex].clearTarget[i].count}\n";
-            }
+            SetStageTargetUI();
         }
         else
         {
@@ -370,6 +372,30 @@ public class NodeManager : SingleTon<NodeManager>
         GameManager.Instance.canMove = true;
         UIManager.Instance.block[1].SetActive(false);
     }
+    private void OnEnable()
+    {
+        ThemeManager.Instance.OnChangeTheme += SetStageTargetUI;
+    }
+    private void OnDisable()
+    {
+        ThemeManager.Instance.OnChangeTheme -= SetStageTargetUI;
+    }
+    private  void SetStageTargetUI()
+    {
+        for (int i = 0; i < stageSO[stageIndex].clearTarget.Count; i++)
+        {
+            UIManager.Instance.targetImages[i].gameObject.SetActive(true);
+            UIManager.Instance.targetImages[i].sprite = ThemeManager.Instance.CurrentTheme.blockImage;
+            UIManager.Instance.targetImages[i].color = ThemeManager.Instance.CurrentTheme.blockColor[stageSO[stageIndex].clearTarget[i].nodeLevel - 1];
+            UIManager.Instance.targetImages[i].transform.GetChild(0).GetComponent<Image>().sprite = ThemeManager.Instance.CurrentTheme.sprites[stageSO[stageIndex].clearTarget[i].nodeLevel - 1];
+            UIManager.Instance.targetTexts[i].text = stageSO[stageIndex].clearTarget[i].count.ToString();
+        }
+        for (int i = stageSO[stageIndex].clearTarget.Count; i < 5; i++)
+        {
+            UIManager.Instance.targetImages[i].gameObject.SetActive(false);
+        }
+    }
+
     public void PopSoundPlay()
     {
         popSound.Play();
@@ -469,7 +495,7 @@ public class NodeManager : SingleTon<NodeManager>
         OverSet();
 
     }
-    private void OverSet()
+    private void OverSet()//게임 완전히 끝남(게임 오버 UI 나옴)
     {
         /*if(Random.value < 0.33333f && PlayerPrefs.GetInt("Ad") == 1)
         {
@@ -478,6 +504,7 @@ public class NodeManager : SingleTon<NodeManager>
         }*/
         UIManager.Instance.GameOverUIIn();
         UIManager.Instance.PlayUIOut();
+        QuestManager.Instance.EndGame(currentModeIndex, score);
         resurvive = false;
     }
 }

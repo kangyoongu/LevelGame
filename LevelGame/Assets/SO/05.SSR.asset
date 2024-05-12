@@ -19,11 +19,12 @@ MonoBehaviour:
   - {r: 0.9921569, g: 0.52156866, b: 0.050980397, a: 1}
   - {r: 1, g: 0.18557066, b: 0.17610055, a: 1}
   - {r: 0.2437403, g: 0.26125786, b: 0.745283, a: 1}
-  - {r: 0.9490197, g: 0.8862746, b: 0.15294118, a: 1}
-  - {r: 1, g: 0.8052616, b: 0, a: 1}
+  - {r: 0.9716981, g: 0.9244935, b: 0.37278977, a: 1}
+  - {r: 1, g: 0.20440245, b: 0.97113675, a: 1}
   - {r: 0.30817604, g: 1, b: 0.9723935, a: 1}
   - {r: 0.41721642, g: 0.11386012, b: 0.9528302, a: 1}
-  blockSprite:
+  material: {fileID: 2100000, guid: a22215128da9c7d4ca8b4b8e93b58f04, type: 2}
+  sprites:
   - {fileID: 21300000, guid: 0a09d6d9c82d48241b019695762895fc, type: 3}
   - {fileID: 21300000, guid: d33ef8474e553f44abe00b49e3a6c529, type: 3}
   - {fileID: 21300000, guid: a7b7a0ab21205264b98c6c55d32abd2b, type: 3}
@@ -34,6 +35,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: daf900b98b44e3d40b4393ee028e5a06, type: 3}
   - {fileID: 21300000, guid: b0f6ac434b64d10448bdf68aa5c5f6a8, type: 3}
   - {fileID: 21300000, guid: a47af4434d514ba4a8ec2e87cbf4834e, type: 3}
+  blockImage: {fileID: 21300000, guid: 47ddce76d84f48c4c8245da5512606e3, type: 3}
   backgroundColor: {r: 0.27450982, g: 0.47384375, b: 1, a: 1}
   blankColor: {r: 0.7232704, g: 0.83964, b: 1, a: 1}
   play: {r: 1, g: 0.7568628, b: 0.027450982, a: 1}
@@ -41,7 +43,7 @@ MonoBehaviour:
   sound: {r: 0.12941177, g: 0.5882353, b: 0.95294124, a: 1}
   store: {r: 0.011421547, g: 0.7264151, b: 0.65968245, a: 1}
   setting: {r: 0.5156738, g: 0.36833978, b: 0.9150943, a: 1}
-  scoreBack: {r: 0.33753172, g: 0.20315649, b: 0.6037736, a: 1}
+  scoreBack: {r: 0.16611291, g: 0.074641, b: 0.3490566, a: 1}
   icons: {r: 1, g: 1, b: 1, a: 1}
   warning: {r: 1, g: 0.747398, b: 0, a: 1}
   pedigreeBackground: {r: 0.24866502, g: 0.3050552, b: 0.31132078, a: 1}
