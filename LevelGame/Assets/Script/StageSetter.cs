@@ -12,24 +12,26 @@ public class StageSetter : MonoBehaviour
     public SnapScroll scroll;
     int stageNum;
     public static Action setButton;
+    public static int pageStageNum = 20;
     private void Start()
     {
         stageNum = NodeManager.Instance.stageSO.Length;
-        int chapterNum = stageNum / 32;
+        int chapterNum = stageNum / pageStageNum;
         scroll.size = chapterNum;
+
         for (int i = 0; i < chapterNum; i++)
         {
             Transform parent = Instantiate(chapter, chapterParent).transform;
-            for(int j = 0; j < 32; j++)
+            for(int j = 0; j < pageStageNum; j++)
             {
                 Instantiate(stageButton, parent);
             }
         }
-        if (stageNum % 32 > 0)
+        if (stageNum % pageStageNum > 0)
         {
             scroll.size++;
             Transform parent = Instantiate(chapter, chapterParent).transform;
-            for (int i = 0; i < stageNum % 32; i++)
+            for (int i = 0; i < stageNum % pageStageNum; i++)
             {
                 Instantiate(stageButton, parent);
             }

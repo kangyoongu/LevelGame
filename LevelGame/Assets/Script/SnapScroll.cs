@@ -18,7 +18,7 @@ public class SnapScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
     public void Init()
     {
-        PlayerPrefs.DeleteKey("Snap");
+        //PlayerPrefs.DeleteKey("Snap");
         pos = new float[size];
         distance = 1f / (size - 1);
         for (int i = 0; i < size; i++) pos[i] = distance * i;

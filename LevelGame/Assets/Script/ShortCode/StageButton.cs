@@ -14,7 +14,7 @@ public class StageButton : MonoBehaviour
         StageSetter.setButton += SetImage;
         childText = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         image = transform.GetChild(1).gameObject;
-        index = transform.GetSiblingIndex() + (32 * transform.parent.GetSiblingIndex());
+        index = transform.GetSiblingIndex() + (StageSetter.pageStageNum * transform.parent.GetSiblingIndex());
         childText.text = (index+1).ToString();
         SetImage();
         GetComponent<Button>().onClick.AddListener(DoStart);

@@ -9,16 +9,14 @@ public class Theme : MonoBehaviour
     public int price;
     public TextMeshProUGUI priceText;
     public int num;
-    Transform parent;
     private void Start()
     {
-        parent = transform.parent;
         GetComponent<Button>().onClick.AddListener(OnClickBuy);
         priceText.text = price.ToString();
     }
     public void OnClickBuy()
     {
-        if (parent.name == "Buy")
+        if (transform.parent.name == "Buy")
         {
             Buy();
             //ShopScript.instance.NonConsumable_Press(Buy);
@@ -34,7 +32,6 @@ public class Theme : MonoBehaviour
         if (QuestManager.Instance.Coin >= price)
         {
             QuestManager.Instance.Coin -= price;
-            PublicAudio.Instance.click.Play();
             PlayerPrefs.SetInt("Theme" + num, 1);
             Whear();
         }

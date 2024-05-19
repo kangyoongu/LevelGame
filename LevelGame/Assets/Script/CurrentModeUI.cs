@@ -23,7 +23,7 @@ public class CurrentModeUI : MonoBehaviour
     private void OnEnable()
     {
         NodeManager.Instance.OnSetStageMode += CurrentImage;
-        ApplyCurrentTheme();
+        ThemeManager.Instance.OnChangeTheme += ApplyCurrentTheme;
     }
     private void CurrentImage(int index)
     {

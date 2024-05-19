@@ -53,6 +53,8 @@ public class BombVisualMove : VisualMove
             }
         }
 
+        NodeManager.Instance.RemoveCoin();
+
         #region ¬Ã±Í«— æ÷¥œ∏ﬁ¿Ãº«
         if (target == null)
         {
@@ -97,22 +99,24 @@ public class BombVisualMove : VisualMove
         NodeInfo parent = GetComponentInParent<NodeInfo>();
         value = target.gameObject.GetComponentInParent<NodeInfo>().num;
         bombParticle.Play();
-        if (GameManager.Instance.stage)
-        {
-            NodeManager.Instance.CheckClear();
-        }
 
         SetColor();
         NodeManager.Instance.blankNode.Add(parent);
         target.meshRenderer.enabled = false;
         PublicAudio.Instance.merge.Play();
-        int destroyCount = Mathf.Max(0, KillNeighbor(target)+makeNum - 2);
-        float spawnDelay = 0.5f;
+        int destroyCount = Mathf.Max(0, KillNeighbor(target) + makeNum - 1);
+        if (GameManager.Instance.stage && destroyCount <= 0)
+        {
+            NodeManager.Instance.CheckClear();
+        }
+
         for (int i = 0; i < destroyCount; i++)
         {
-            NodeManager.Instance.MakeNode(spawnDelay, makeLevel);
+            spawnList.Enqueue(makeLevel);
         }
+        Spawn();
         NodeManager.Instance.OnEndMove?.Invoke();
+        NodeManager.Instance.SpawnCoin();
         yield return new WaitForEndOfFrame();
         /*if (GameManager.Instance.canMove)
             NodeManager.Instance.EndCheck(false);

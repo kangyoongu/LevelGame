@@ -40,6 +40,7 @@ public class Quest : MonoBehaviour
                     questData.state = 1;
                     buttonImage.color = ThemeManager.Instance.CurrentTheme.ring;
                     buttonImage.color = new Color(buttonImage.color.r, buttonImage.color.g, buttonImage.color.b, 1);
+                    QuestManager.Instance.SetGuide();
                 }
             }
         }
@@ -50,7 +51,7 @@ public class Quest : MonoBehaviour
         gameObject.SetActive(true);
         SetRectTransform();
         rectTransform.localScale = Vector3.one;
-        rectTransform.sizeDelta = new Vector2(886.488f, 255.9837f);
+        rectTransform.sizeDelta = new Vector2(886.488f, 337.4f);
         questData.mode = mode;
         questData.score = score;
         questData.targetCount = targetCount;
@@ -69,7 +70,7 @@ public class Quest : MonoBehaviour
             modeIcons[i].SetActive(false);
         }
         modeIcons[mode].SetActive(true);
-        rewardText.text = $"+     {reward}";
+        rewardText.text = $"+    {reward}";
     }
 
     private void SetRectTransform()
@@ -126,6 +127,11 @@ public class Quest : MonoBehaviour
             {
                 gameObject.SetActive(false);
             });
+            QuestManager.Instance.SetGuide();
+        }
+        else
+        {
+            PublicAudio.Instance.beebeeb.PlayOneShot(PublicAudio.Instance.beebeeb.clip);
         }
     }
 }

@@ -47,10 +47,12 @@ public class CoinEffect : SingleTon<CoinEffect>
             coin.gameObject.SetActive(true);
             currentCoin += onceAdd;
             float textCoin = currentCoin;
+            PublicAudio.Instance.coin.PlayOneShot(PublicAudio.Instance.coin.clip);
             coin.DOAnchorPos(coin.anchoredPosition + Random.insideUnitCircle * Random.Range(50f, 300f), 0.5f).SetEase(Ease.OutBack).OnComplete(() =>
             {
                 coin.DOMove(coinPos.position, 0.9f).SetEase(Ease.InBack).OnComplete(() =>
                 {
+                    PublicAudio.Instance.tic.PlayOneShot(PublicAudio.Instance.tic.clip);
                     foreach (TextMeshProUGUI text in QuestManager.Instance.coinText)
                         text.text = Mathf.RoundToInt(textCoin).ToString("0");
                     coin.gameObject.SetActive(false);

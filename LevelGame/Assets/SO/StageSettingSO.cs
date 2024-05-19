@@ -29,7 +29,8 @@ public enum Game : short
 {
     Normal = 0,
     BlockBlock = 1,
-    MultiMerge = 2
+    MultiMerge = 2,
+    Bomb = 3
 }
 
 [CreateAssetMenu(fileName = "StageSettingData", menuName = "SO/StageSettingData")]

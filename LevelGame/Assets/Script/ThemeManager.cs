@@ -26,7 +26,7 @@ public class ThemeManager : SingleTon<ThemeManager>
     public Image ring;
     public Image[] ad;
     public Image[] heart;
-    public Image x;
+    public Image[] x;
     public Transform[] themes;
     public Transform get;
     public Transform sell;
@@ -38,16 +38,10 @@ public class ThemeManager : SingleTon<ThemeManager>
         if (!PlayerPrefs.HasKey("Whear"))
         {
             PlayerPrefs.SetInt("Whear", 0);
-            for (int i = 0; i < themes.Length; i++)
+            PlayerPrefs.SetInt("Theme" + 0, 1);
+            for (int i = 1; i < themes.Length; i++)
             {
-                if (i < 1)
-                {
-                    PlayerPrefs.SetInt("Theme" + i, 1);
-                }
-                else {
-
-                    PlayerPrefs.SetInt("Theme" + i, 0);
-                }
+                PlayerPrefs.SetInt("Theme" + i, 0);
             }
         }
         ApplyChange();
@@ -121,9 +115,7 @@ public class ThemeManager : SingleTon<ThemeManager>
         }*/
         foreach(Image image in background)
         {
-            float alpha = image.color.a;
-            image.color = theme.backgroundColor;
-            image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
+            image.color = new Color(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b, image.color.a);
         }
         foreach (Image image in play)
         {
@@ -162,11 +154,14 @@ public class ThemeManager : SingleTon<ThemeManager>
             text.color = new Color(theme.scoreBack.r, theme.scoreBack.g, theme.scoreBack.b, text.color.a);
         }
         pedigreeBackground.color = theme.pedigreeBackground;
-        x.color = theme.x;
+        foreach (Image image in x)
+        {
+            image.color = theme.x;
+        }
         ring.color = theme.ring;
         foreach (Image image in heart)
         {
-            image.color = theme.heart;
+            image.color = new Color(theme.heart.r, theme.heart.g, theme.heart.b, image.color.a);
         }
         foreach (Image image in ad)
         {

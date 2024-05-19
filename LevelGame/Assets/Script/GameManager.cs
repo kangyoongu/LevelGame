@@ -23,9 +23,9 @@ public class GameManager : SingleTon<GameManager>
     int dragCount;
     List<SpawnNode> spawnNodes;
 
-    [SerializeField] int unlockWall;
-    [SerializeField] int unlockMultiSelect;
-    [SerializeField] int unlockBoom;
+    public int unlockWall;
+    public int unlockMultiSelect;
+    public int unlockBoom;
     [SerializeField] GameObject[] locks;
 
     public int StageNum {
@@ -50,6 +50,7 @@ public class GameManager : SingleTon<GameManager>
     public void Awake()
     {
         Application.targetFrameRate = 90;
+        //PlayerPrefs.DeleteAll();
         if (!PlayerPrefs.HasKey("Best"))
         {
             PlayerPrefs.SetInt("Best", 0);
@@ -119,18 +120,34 @@ public class GameManager : SingleTon<GameManager>
         }
         if (stage && spawnNodes.Count > 0 && dragCount == spawnNodes[0].turnCount)//스테이지에서 이번턴에 만들어질 애를 지정했으면
         {
-            if (connects[0].visualMove as BombVisualMove)
-                (connects[0].visualMove as BombVisualMove).Move(connects[connects.Count - 1].visualMove, 1, spawnNodes[0].spawnLevel);
-            else
-                connects[0].visualMove.Move(connects[connects.Count - 1].visualMove, 1, spawnNodes[0].spawnLevel);
-            for (int i = 1; i < connects.Count-1; i++)
+            int spawn = 0;
+            while (spawnNodes.Count > 0 && spawnNodes[0].turnCount == dragCount)
             {
-                if(connects[i].num == connects[connects.Count-1].num-1)
+                if (spawn == 0)
                 {
-                    connects[i].visualMove.NoAnimRemove(connects[i].visualMove.speed * i);
+                    if (connects[0].visualMove as BombVisualMove)
+                        (connects[0].visualMove as BombVisualMove).Move(connects[connects.Count - 1].visualMove, 1, spawnNodes[0].spawnLevel);
+                    else
+                        connects[0].visualMove.Move(connects[connects.Count - 1].visualMove, 1, spawnNodes[0].spawnLevel);
                 }
+                else
+                {
+                    if (connects[0].visualMove as BombVisualMove)
+                        (connects[0].visualMove as BombVisualMove).AddSpawn(1, spawnNodes[0].spawnLevel);
+                    else
+                        connects[0].visualMove.AddSpawn(1, spawnNodes[0].spawnLevel);
+                }
+                spawn++;
+                spawnNodes.RemoveAt(0);
             }
-            spawnNodes.RemoveAt(0);
+            if(spawn < spawnCount)
+            {
+
+                if (connects[0].visualMove as BombVisualMove)
+                    (connects[0].visualMove as BombVisualMove).AddSpawn(spawnCount- spawn, 0);
+                else
+                    connects[0].visualMove.AddSpawn(spawnCount- spawn, 0);
+            }
         }
         else
         {
@@ -138,13 +155,16 @@ public class GameManager : SingleTon<GameManager>
                 (connects[0].visualMove as BombVisualMove).Move(connects[connects.Count - 1].visualMove, spawnCount, 0);
             else
                 connects[0].visualMove.Move(connects[connects.Count - 1].visualMove, spawnCount, 0);
-
-            for (int i = 1; i < connects.Count - 1; i++)
+        }
+        for (int i = 1; i < connects.Count - 1; i++)
+        {
+            if (connects[i].num == connects[connects.Count - 1].num - 1)
             {
-                if (connects[i].num == connects[connects.Count - 1].num-1)
-                {
-                    connects[i].visualMove.NoAnimRemove(connects[i].visualMove.speed * i);
-                }
+                connects[i].visualMove.NoAnimRemove(connects[i].visualMove.speed * i);
+            }
+            else if (connects[i].coinNode)
+            {
+                connects[i].EatCoin(connects[0].visualMove.speed * i);
             }
         }
     }

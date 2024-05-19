@@ -15,6 +15,7 @@ public class VisualMove : MonoBehaviour
     public AudioClip clips;
     protected ParticleSystem particle;
     [HideInInspector] public ParticleSystem bombParticle;
+    protected Queue<int> spawnList = new Queue<int>();
     protected int value;
 
     protected SpriteRenderer icon;
@@ -92,6 +93,8 @@ public class VisualMove : MonoBehaviour
             }
         }
 
+        NodeManager.Instance.RemoveCoin();
+
         #region 쫄깃한 애니메이션
         if (target == null)
         {
@@ -139,12 +142,12 @@ public class VisualMove : MonoBehaviour
             target.bombParticle.startColor = NodeManager.Instance.nodeColor[value];
         else
         {
-            destroyCount = Mathf.Max(0, (target as BombVisualMove).KillNeighbor(target) + makeNum - 2);
+            destroyCount = Mathf.Max(0, (target as BombVisualMove).KillNeighbor(target) + makeNum - 1);
             value++;
         }
         target.SetColor();
         target.bombParticle.Play();
-        if (GameManager.Instance.stage)
+        if (GameManager.Instance.stage && destroyCount <= 0)
         {
              NodeManager.Instance.CheckClear();
         }
@@ -154,13 +157,13 @@ public class VisualMove : MonoBehaviour
         meshRenderer.enabled = false;
         PublicAudio.Instance.merge.Play();
 
-
-        float spawnDelay = 0.5f;
         for (int i = 0; i < destroyCount; i++)
         {
-            NodeManager.Instance.MakeNode(spawnDelay, makeLevel);
+            spawnList.Enqueue(makeLevel);
         }
+        Spawn();
         NodeManager.Instance.OnEndMove?.Invoke();
+        NodeManager.Instance.SpawnCoin();
         yield return new WaitForEndOfFrame();
         /*if (GameManager.Instance.canMove)
             NodeManager.Instance.EndCheck(false);
@@ -174,6 +177,23 @@ public class VisualMove : MonoBehaviour
         positions = new List<Vector3>();
         lineRenderer.positionCount = 0;
         GameManager.Instance.onOtherNode = true;
+    }
+    public void AddSpawn(int count, int level)
+    {
+        for(int i = 0; i < count; i++)
+            spawnList.Enqueue(level);
+    }
+    protected void Spawn()
+    {
+        while(spawnList.Count > 0)
+        {
+            int level = spawnList.Dequeue();
+
+            if (level == 0)
+                NodeManager.Instance.MakeNode(0.5f, Random.Range(1, 4));
+            else
+                NodeManager.Instance.MakeNode(0.5f, level);
+        }
     }
     public void AddPosition(Vector3 pos)//linerenderer 값 추가
     {

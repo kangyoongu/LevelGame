@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class CoinShopButton : MonoBehaviour
 {
-    [SerializeField] private bool ad;
     [SerializeField] private int price;
     [SerializeField] private int coinCount;
 
@@ -15,26 +14,18 @@ public class CoinShopButton : MonoBehaviour
 
     private void Start()
     {
-        if(ad == false)
-            priceText.text = price + "$";
+        priceText.text = price + "$";
         coinText.text = coinCount.ToString();
     }
 
     public void OnClickBuy()
     {
-        if (ad)
-        {
-
-        }
-        else
-        {
-
-        }
         SuccessBuy();
     }
 
     private void SuccessBuy()
     {
+        PublicAudio.Instance.click.Play();
         CoinEffect.Instance.Effect((int)(coinCount * 0.05f), coinCount, coinPos.position);
     }
 }

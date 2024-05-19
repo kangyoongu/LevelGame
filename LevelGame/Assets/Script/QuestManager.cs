@@ -10,15 +10,28 @@ public class QuestManager : SingleTon<QuestManager>
 {
     public Quest[] quests;
     public TextMeshProUGUI[] coinText;
+    public TextMeshProUGUI[] rewardText;
     public TextMeshProUGUI timeText;
+    public GameObject guide;
+    [SerializeField] int maxReward = 5;
     public int Coin
     {
         get => PlayerPrefs.GetInt("Coin");
         set
         {
             PlayerPrefs.SetInt("Coin", value);
-            foreach(TextMeshProUGUI text in coinText)
+            foreach (TextMeshProUGUI text in coinText)
                 text.text = value.ToString("");
+        }
+    }
+    public int RewardCount
+    {
+        get => PlayerPrefs.GetInt("RewardCount");
+        set
+        {
+            PlayerPrefs.SetInt("RewardCount", value);
+            foreach (TextMeshProUGUI text in rewardText)
+                text.text = $"{value}/{maxReward}";
         }
     }
     private void Awake()
@@ -27,7 +40,9 @@ public class QuestManager : SingleTon<QuestManager>
         {
             PlayerPrefs.SetInt("Coin", 0);
         }
+        //PlayerPrefs.SetInt("Day", DateTime.Now.Day-1);
         Coin = Coin;
+        RewardCount = RewardCount;
     }
     private void Start()
     {
@@ -42,6 +57,7 @@ public class QuestManager : SingleTon<QuestManager>
         if(DateTime.Now.Day != PlayerPrefs.GetInt("Day"))
         {
             RandomQuest();
+            RewardCount = 0;
             PlayerPrefs.SetInt("Day", DateTime.Now.Day);
         }
         timeText.text = "Next " + GetTimeUntilNextDay();
@@ -52,6 +68,7 @@ public class QuestManager : SingleTon<QuestManager>
         {
             quests[i].Init(Random.Range(0, 4), Random.Range(4, 5) * 10, 0, Random.Range(2, 5), Random.Range(10, 31) * 10, 0);
         }
+        JsonManager.Instance.SaveData();
     }
     public void EndGame(int mode, int score)
     {
@@ -89,5 +106,35 @@ public class QuestManager : SingleTon<QuestManager>
                                     timeUntilNextDay.Seconds);
 
         return formattedTime;
+    }
+    public void SetGuide()
+    {
+        bool off = true;
+        for (int i = 0; i < quests.Length; i++)
+        {
+            if(quests[i].questData.state == 1)
+            {
+                off = false;
+                break;
+            }
+        }
+        guide.SetActive(!off);
+    }
+    public void OnClickRewardAd(Transform effectPos)
+    {
+        if (RewardCount < maxReward)
+        {
+            RewardCount++;
+            SuccessReward(effectPos);
+        }
+        else
+        {
+            PublicAudio.Instance.beebeeb.PlayOneShot(PublicAudio.Instance.beebeeb.clip);
+        }
+    }
+    private void SuccessReward(Transform effectPos)
+    {
+        PublicAudio.Instance.click.Play();
+        CoinEffect.Instance.Effect(10, 70, effectPos.position);
     }
 }

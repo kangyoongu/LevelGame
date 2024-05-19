@@ -16,6 +16,7 @@ public class NodeManager : SingleTon<NodeManager>
     public Color[] nodeColor;
     public TextMeshProUGUI[] bestText;
     public TextMeshProUGUI[] currentText;
+    public Transform coins;
     int[] clearTargets;
     bool resurvive = false;
     bool removing = false;//플레이하다가 다시하기누르면 막 생기면서 난리치는거 방지
@@ -35,10 +36,13 @@ public class NodeManager : SingleTon<NodeManager>
     public Action OnStartMode;
     public Action OnEndMove;
 
+    [SerializeField] UnlockMap unlockMap;
+
     public delegate void IntAction(int value);
     public IntAction OnSetStageMode;
 
     Coroutine delayMakeVisual;
+
     private int score = 0;
     public int Score {
         get { return score; }
@@ -148,14 +152,15 @@ public class NodeManager : SingleTon<NodeManager>
 
     public void CheckClear()
     {
+        if (unlockMap.gameObject.activeSelf == true) return;
         clearTargets = new int[stageSO[stageIndex].clearTarget.Count];
         for (int i = 0; i < fullNodes.Length; i++)
         {
-            if(fullNodes[i].num != 0)
+            if (fullNodes[i].num != 0)
             {
-                for(int j = 0; j < clearTargets.Length; j++)
+                for (int j = 0; j < clearTargets.Length; j++)
                 {
-                    if(fullNodes[i].num == stageSO[stageIndex].clearTarget[j].nodeLevel)
+                    if (fullNodes[i].num == stageSO[stageIndex].clearTarget[j].nodeLevel)
                     {
                         clearTargets[j]++;
                         break;
@@ -170,16 +175,41 @@ public class NodeManager : SingleTon<NodeManager>
                 return;
             }
         }
-
         if (stageIndex >= GameManager.Instance.StageNum)
         {
             GameManager.Instance.StageNum++;
+            if (GameManager.Instance.StageNum == GameManager.Instance.unlockWall)
+            {
+                StartCoroutine(ResetNodes(null));
+                unlockMap.SetModeIcon(0);
+            }
+            else if (GameManager.Instance.StageNum == GameManager.Instance.unlockMultiSelect)
+            {
+                StartCoroutine(ResetNodes(null));
+                unlockMap.SetModeIcon(1);
+            }
+            else if (GameManager.Instance.StageNum == GameManager.Instance.unlockBoom)
+            {
+                StartCoroutine(ResetNodes(null));
+                unlockMap.SetModeIcon(2);
+            }
+            else
+            {
+                StartCoroutine(ResetNodes(() =>
+                {
+                    UIManager.Instance.StageClearUIIn();
+                }, 1.5f));
+            }
         }
-        StartCoroutine(ResetNodes(() =>
+        else
         {
-            UIManager.Instance.StageClearUIIn();
-        }, 1.5f));
+            StartCoroutine(ResetNodes(() =>
+            {
+                UIManager.Instance.StageClearUIIn();
+            }, 1.5f));
+        }
     }
+
 
     public void MakeNode(float visualDelay = 0, int level = 0)
     {
@@ -236,11 +266,39 @@ public class NodeManager : SingleTon<NodeManager>
         if (chance == false)
         {
             StartCoroutine(GameOver());
+            RemoveCoin();
             return false;
         }
         else
         {
             return true;
+        }
+    }
+
+    public void SpawnCoin()
+    {
+        if (GameManager.Instance.stage) return;
+        if (blankNode.Count <= 0) return;
+        if (Random.Range(0, 10) < 6)
+        {
+            int count = blankNode.Count >= 2 ? Random.Range(1, 3) : 1;
+            int add = blankNode.Count / count;
+            int index = 0;
+            for (int i = 0; i < count; i++)
+            {
+                index += Random.Range(0, add);
+                blankNode[index].OnCoin();
+            }
+        }
+    }
+    public void RemoveCoin()
+    {
+        foreach(NodeInfo node in blankNode)
+        {
+            if (node.coinNode)
+            {
+                node.RemoveCoin();
+            }
         }
     }
 
@@ -279,7 +337,7 @@ public class NodeManager : SingleTon<NodeManager>
         }
         else
         {
-            if (((Score >= 250 && Random.value > 0.5f) || Score >= 450) && resurvive == false)
+            if (((Score >= 250 && Random.value > 0.5f) || Score >= 450) && resurvive == false && blankNode.Count > 0)
             {
                 resurvive = true;
                 UIManager.Instance.SurvivalUIIn();
@@ -406,6 +464,7 @@ public class NodeManager : SingleTon<NodeManager>
         {
             StopCoroutine(delayMakeVisual);
         }
+        RemoveCoin();
         for (int i = 0; i < fullNodes.Length; i++)
         {
             if (fullNodes[i].transform.childCount > 0) 

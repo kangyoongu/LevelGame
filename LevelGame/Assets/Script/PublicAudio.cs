@@ -5,5 +5,8 @@ using UnityEngine;
 public class PublicAudio : SingleTon<PublicAudio>
 {
     public AudioSource merge;
-    public AudioSource click;
+    public RandomPitchPlay click;
+    public AudioSource coin;
+    public AudioSource beebeeb;
+    public AudioSource tic;
 }
