@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b4bef277de1847bf66b06fc25e207, type: 3}
+  m_Name: 00.Basic2
+  m_EditorClassIdentifier: 
+  blockColor:
+  - {r: 0.49803925, g: 0.54901963, b: 0.5529412, a: 1}
+  - {r: 0.764151, g: 0.30421177, b: 0, a: 1}
+  - {r: 0.74509805, g: 0.7686275, b: 0.7843138, a: 1}
+  - {r: 0.9450981, g: 0.7686275, b: 0.058823533, a: 1}
+  - {r: 0.20392159, g: 0.59607846, b: 0.8588236, a: 1}
+  - {r: 0.13919537, g: 0.5370339, b: 0.6509434, a: 1}
+  - {r: 0.10196079, g: 0.7372549, b: 0.6117647, a: 1}
+  - {r: 0.13333334, g: 0.6, b: 0.32941177, a: 1}
+  - {r: 0.54509807, g: 0.30980393, b: 0.6431373, a: 1}
+  - {r: 0.9245283, g: 0.26599056, b: 0.19769777, a: 1}
+  material: {fileID: 2100000, guid: a22215128da9c7d4ca8b4b8e93b58f04, type: 2}
+  sprites:
+  - {fileID: 21300000, guid: 8cb1aee17298f664c870e9a42a893fdd, type: 3}
+  - {fileID: 21300000, guid: 05eb5d4a2ef38714c846efe2a4cc0aa6, type: 3}
+  - {fileID: 21300000, guid: 061dce4208c84bf42a532218b95d1ae6, type: 3}
+  - {fileID: 21300000, guid: 3bf832a69813f5f43a8b45ebe5873570, type: 3}
+  - {fileID: 21300000, guid: bdd9702823d106643be3b4a245820fd0, type: 3}
+  - {fileID: 21300000, guid: e9881d01e039bef4e96f87a0304593e2, type: 3}
+  - {fileID: 21300000, guid: 60eeaa960e863534c8ab51c0e65108f5, type: 3}
+  - {fileID: 21300000, guid: 0180a365dede877438583a95dff06b58, type: 3}
+  - {fileID: 21300000, guid: 1659a74583ea0fe45a62f28f6152bdd6, type: 3}
+  - {fileID: 21300000, guid: a1999bee02f64a44fb5488b6a26c4bac, type: 3}
+  blockImage: {fileID: 21300000, guid: 47ddce76d84f48c4c8245da5512606e3, type: 3}
+  backgroundColor: {r: 0.9607844, g: 0.9607844, b: 0.86274517, a: 1}
+  blankColor: {r: 0.65882355, g: 0.6392157, b: 0.6039216, a: 1}
+  play: {r: 0.98823535, g: 0.7372549, b: 0.2509804, a: 1}
+  rank: {r: 1, g: 0.45882356, b: 0.45882356, a: 1}
+  sound: {r: 0.4901961, g: 0.7254902, b: 0.87843144, a: 1}
+  store: {r: 0.32156864, g: 0.87843144, b: 0.6862745, a: 1}
+  setting: {r: 0.65882355, g: 0.79215693, b: 0.87843144, a: 1}
+  scoreBack: {r: 0.08627451, g: 0.08627451, b: 0.08627451, a: 1}
+  icons: {r: 1, g: 1, b: 1, a: 1}
+  warning: {r: 0.9333334, g: 0.6117647, b: 0.2509804, a: 1}
+  pedigreeBackground: {r: 0.16981131, g: 0.16981131, b: 0.13243145, a: 1}
+  heart: {r: 0.91764706, g: 0.17254902, b: 0.17254902, a: 0}
+  ring: {r: 0.35380316, g: 0.8396226, b: 0.37761784, a: 0}
+  ad: {r: 0.23137257, g: 0.34901962, b: 0.59607846, a: 1}
+  x: {r: 0.7843138, g: 0.7843138, b: 0.7843138, a: 1}
