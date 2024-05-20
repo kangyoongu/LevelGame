@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ee43c6fcaba87439e01c8ffb735b68, type: 3}
   m_Name: StageTest 1
   m_EditorClassIdentifier: 
-  gameMode: 0
+  gameMode: 2
   clearTarget:
   - nodeLevel: 5
     count: 1

@@ -10,7 +10,7 @@ public class SnapScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     public Scrollbar scrollbar;
     [SerializeField] private TextMeshProUGUI pageText;
 
-    public int size = 2;
+    [HideInInspector]public int size = 2;
     float[] pos;
     float distance, curPos, targetPos;
     bool isDrag = false;
@@ -28,6 +28,9 @@ public class SnapScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
         targetPos = pos[PlayerPrefs.GetInt("Snap")];
         pageText.text = $"{PlayerPrefs.GetInt("Snap")+1} / {size}";
+    }
+    private void Start()
+    {
         scrollbar.value = targetPos;
     }
     public void OnBeginDrag(PointerEventData eventData)
