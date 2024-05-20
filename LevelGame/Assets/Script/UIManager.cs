@@ -66,6 +66,7 @@ public class UIManager : SingleTon<UIManager>
 
     public Image[] targetImages;
     public TextMeshProUGUI[] targetTexts;
+    [HideInInspector] public bool againable = true;
     private void Awake()
     {
         //PlayerPrefs.DeleteAll();
@@ -245,6 +246,13 @@ public class UIManager : SingleTon<UIManager>
     }
     public void OnClickAgain()//다시하기 누르면
     {
+        if (againable == false)
+        {
+            PublicAudio.Instance.beebeeb.PlayOneShot(PublicAudio.Instance.beebeeb.clip);
+            return;
+        }
+        PublicAudio.Instance.click.Play();
+        againable = false;
         GameOverUIOut();
         MenuUIOut();
         StageClearUIOut();
