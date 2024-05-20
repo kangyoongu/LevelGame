@@ -35,7 +35,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0180a365dede877438583a95dff06b58, type: 3}
   - {fileID: 21300000, guid: 1659a74583ea0fe45a62f28f6152bdd6, type: 3}
   - {fileID: 21300000, guid: a1999bee02f64a44fb5488b6a26c4bac, type: 3}
-  blockImage: {fileID: 21300000, guid: 47ddce76d84f48c4c8245da5512606e3, type: 3}
+  blockImage: {fileID: 21300000, guid: 62fdb3682accda84a9e68b4add2b5c4f, type: 3}
   backgroundColor: {r: 0.9333334, g: 0.7490196, b: 0.77647066, a: 1}
   blankColor: {r: 0.62311614, g: 0.7018457, b: 0.8396226, a: 1}
   play: {r: 0.8584906, g: 0.21597241, b: 0.2947124, a: 1}

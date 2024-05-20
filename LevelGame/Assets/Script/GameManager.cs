@@ -38,11 +38,11 @@ public class GameManager : SingleTon<GameManager>
             PlayerPrefs.SetInt("StageNum", value);
 
             if (value >= unlockWall)
-                locks[0].SetActive(false);
+                locks[2].SetActive(false);
             if (value >= unlockMultiSelect)
                 locks[1].SetActive(false);
             if (value >= unlockBoom)
-                locks[2].SetActive(false);
+                locks[0].SetActive(false);
 
             StageSetter.setButton?.Invoke();
         }

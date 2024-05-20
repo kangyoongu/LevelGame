@@ -23,7 +23,7 @@ MonoBehaviour:
   - {r: 0.566898, g: 0.9150943, b: 0.7177831, a: 1}
   - {r: 0.86263543, g: 0.68431824, b: 0.9339623, a: 1}
   - {r: 0.9528302, g: 0.60650253, b: 0.57229733, a: 1}
-  material: {fileID: 2100000, guid: b7a4829cb1eaae949a4c377b4f1c1fed, type: 2}
+  material: {fileID: 2100000, guid: a22215128da9c7d4ca8b4b8e93b58f04, type: 2}
   sprites:
   - {fileID: 21300000, guid: 8cb1aee17298f664c870e9a42a893fdd, type: 3}
   - {fileID: 21300000, guid: 05eb5d4a2ef38714c846efe2a4cc0aa6, type: 3}
@@ -35,7 +35,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0180a365dede877438583a95dff06b58, type: 3}
   - {fileID: 21300000, guid: 1659a74583ea0fe45a62f28f6152bdd6, type: 3}
   - {fileID: 21300000, guid: a1999bee02f64a44fb5488b6a26c4bac, type: 3}
-  blockImage: {fileID: 21300000, guid: 142b61114c8c0194898b2081d0dbb424, type: 3}
+  blockImage: {fileID: 21300000, guid: 47ddce76d84f48c4c8245da5512606e3, type: 3}
   backgroundColor: {r: 1, g: 0.8745099, b: 0.7294118, a: 1}
   blankColor: {r: 0.7372549, g: 0.7372549, b: 0.7372549, a: 1}
   play: {r: 0.97647065, g: 0.9058824, b: 0.62352943, a: 1}

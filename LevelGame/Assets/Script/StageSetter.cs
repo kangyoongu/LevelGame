@@ -17,7 +17,15 @@ public class StageSetter : MonoBehaviour
     private void Start()
     {
         stageNum = NodeManager.Instance.stageSO.Length;
+        RectTransform button = stageButton.GetComponent<RectTransform>();
+
+        /*int row = (int)((viewport.rect.height- 104) / (button.rect.height+33));
+        int colum = (int)((viewport.rect.width- 104) / (button.rect.width+33));
+        pageStageNum = row * colum;*/
+        //print($"{viewport.rect.height} {button.rect.height}");
+        pageStageNum = 32;
         int chapterNum = stageNum / pageStageNum;
+        //print($"{pageStageNum}");
 
         for (int i = 0; i < chapterNum; i++)
         {

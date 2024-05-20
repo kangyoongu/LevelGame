@@ -21,12 +21,12 @@ public class StageButton : MonoBehaviour
     }
     void DoStart()
     {
-        //if (index <= GameManager.Instance.StageNum)
+        if (index <= GameManager.Instance.StageNum)
             NodeManager.Instance.OnClickStartStage(index);
     }
     void SetImage()
     {
-        if (/*index  <= GameManager.Instance.StageNum*/true)
+        if (index  <= GameManager.Instance.StageNum)
         {
             image.SetActive(false);
             childText.gameObject.SetActive(true);

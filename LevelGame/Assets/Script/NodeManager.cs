@@ -186,7 +186,7 @@ public class NodeManager : SingleTon<NodeManager>
             if (GameManager.Instance.StageNum == GameManager.Instance.unlockWall)
             {
                 StartCoroutine(ResetNodes(null));
-                unlockMap.SetModeIcon(0);
+                unlockMap.SetModeIcon(2);
             }
             else if (GameManager.Instance.StageNum == GameManager.Instance.unlockMultiSelect)
             {
@@ -196,7 +196,7 @@ public class NodeManager : SingleTon<NodeManager>
             else if (GameManager.Instance.StageNum == GameManager.Instance.unlockBoom)
             {
                 StartCoroutine(ResetNodes(null));
-                unlockMap.SetModeIcon(2);
+                unlockMap.SetModeIcon(0);
             }
             else
             {
@@ -389,6 +389,7 @@ public class NodeManager : SingleTon<NodeManager>
         modes[mode].Init();
         currentMode = modes[mode];
         currentModeIndex = mode;
+        
 
         if (stage)
         {
@@ -434,7 +435,8 @@ public class NodeManager : SingleTon<NodeManager>
         yield return new WaitForSeconds(0.6f);
         GameManager.Instance.canMove = true;
         UIManager.Instance.againable = true;
-        CheckClear();
+        if (stage)
+            CheckClear();
         UIManager.Instance.block[1].SetActive(false);
     }
     private void OnEnable()

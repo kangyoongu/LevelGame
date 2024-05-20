@@ -18,10 +18,10 @@ MonoBehaviour:
     count: 1
   startFormat:
   - blockNum: 6
-    spawnLevel: 1
+    spawnLevel: 9
     bomb: 0
   - blockNum: 12
-    spawnLevel: 1
+    spawnLevel: 9
     bomb: 0
   - blockNum: 0
     spawnLevel: 2

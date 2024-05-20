@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7b4bef277de1847bf66b06fc25e207, type: 3}
-  m_Name: 00.Red
+  m_Name: Red
   m_EditorClassIdentifier: 
   blockColor:
   - {r: 0.34901962, g: 0.050980393, b: 0.13333334, a: 1}
@@ -23,7 +23,7 @@ MonoBehaviour:
   - {r: 1, g: 0.7019608, b: 0.75686276, a: 1}
   - {r: 1, g: 0.8, b: 0.8352941, a: 1}
   - {r: 1, g: 0.9411765, b: 0.9529412, a: 1}
-  material: {fileID: 2100000, guid: a22215128da9c7d4ca8b4b8e93b58f04, type: 2}
+  material: {fileID: 2100000, guid: 2983cfa1525d1bf4abb9cac6e9cb1de6, type: 2}
   sprites:
   - {fileID: 21300000, guid: 8cb1aee17298f664c870e9a42a893fdd, type: 3}
   - {fileID: 21300000, guid: 05eb5d4a2ef38714c846efe2a4cc0aa6, type: 3}
@@ -35,7 +35,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0180a365dede877438583a95dff06b58, type: 3}
   - {fileID: 21300000, guid: 1659a74583ea0fe45a62f28f6152bdd6, type: 3}
   - {fileID: 21300000, guid: a1999bee02f64a44fb5488b6a26c4bac, type: 3}
-  blockImage: {fileID: 21300000, guid: 47ddce76d84f48c4c8245da5512606e3, type: 3}
+  blockImage: {fileID: 21300000, guid: 8b43342d31050b8418fc7a7e3e321386, type: 3}
   backgroundColor: {r: 0.98039216, g: 0.8784314, b: 0.89411765, a: 1}
   blankColor: {r: 0.98039216, g: 0.8784314, b: 0.89411765, a: 1}
   play: {r: 0.8980392, g: 0.21960784, b: 0.23137255, a: 1}
@@ -44,10 +44,10 @@ MonoBehaviour:
   store: {r: 1, g: 0.8, b: 0.8352941, a: 1}
   setting: {r: 1, g: 0.56078434, b: 0.6392157, a: 1}
   scoreBack: {r: 0.41568628, g: 0.015686275, b: 0.05882353, a: 1}
-  icons: {r: 0.98039216, g: 0.8784314, b: 0.89411765, a: 1}
+  icons: {r: 1, g: 0.9496855, b: 0.9574262, a: 1}
   warning: {r: 1, g: 0.7019608, b: 0.75686276, a: 1}
   pedigreeBackground: {r: 0.41568628, g: 0.015686275, b: 0.05882353, a: 1}
   heart: {r: 1, g: 0.2784314, b: 0.49411765, a: 0}
   ring: {r: 1, g: 0.6, b: 0.6745098, a: 0}
-  ad: {r: 0.9764706, g: 0.74509805, b: 0.78039217, a: 1}
+  ad: {r: 0.3301887, g: 0.20455083, b: 0.22381529, a: 1}
   x: {r: 0.827451, g: 0.827451, b: 0.827451, a: 1}
