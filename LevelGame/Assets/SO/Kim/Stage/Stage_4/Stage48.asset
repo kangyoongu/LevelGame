@@ -20,6 +20,8 @@ MonoBehaviour:
     count: 2
   - nodeLevel: 3
     count: 3
+  - nodeLevel: 4
+    count: 1
   startFormat:
   - blockNum: 1
     spawnLevel: 3

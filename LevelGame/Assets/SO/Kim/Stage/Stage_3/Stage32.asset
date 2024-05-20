@@ -18,7 +18,7 @@ MonoBehaviour:
     count: 2
   startFormat:
   - blockNum: 4
-    spawnLevel: 3
+    spawnLevel: 2
     bomb: 1
   startNodeCount: 8
   spawnNode:

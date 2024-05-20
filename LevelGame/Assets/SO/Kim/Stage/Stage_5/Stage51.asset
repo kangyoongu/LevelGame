@@ -23,4 +23,6 @@ MonoBehaviour:
   startNodeCount: 8
   spawnNode:
   - turnCount: 1
+    spawnLevel: 2
+  - turnCount: 2
     spawnLevel: 3

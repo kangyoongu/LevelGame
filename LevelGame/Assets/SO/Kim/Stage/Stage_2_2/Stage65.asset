@@ -16,6 +16,8 @@ MonoBehaviour:
   clearTarget:
   - nodeLevel: 4
     count: 4
+  - nodeLevel: 3
+    count: 3
   startFormat:
   - blockNum: 11
     spawnLevel: 3

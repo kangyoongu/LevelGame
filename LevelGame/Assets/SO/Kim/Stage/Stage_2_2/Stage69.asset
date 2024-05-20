@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameMode: 0
   clearTarget:
+  - nodeLevel: 7
+    count: 1
   - nodeLevel: 6
-    count: 3
+    count: 2
   startFormat:
   - blockNum: 1
     spawnLevel: 3
     bomb: 0
   startNodeCount: 8
   spawnNode:
-  - turnCount: 1
+  - turnCount: 2
     spawnLevel: 3

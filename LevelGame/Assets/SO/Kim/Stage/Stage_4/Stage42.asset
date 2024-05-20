@@ -15,7 +15,9 @@ MonoBehaviour:
   gameMode: 2
   clearTarget:
   - nodeLevel: 6
-    count: 2
+    count: 1
+  - nodeLevel: 4
+    count: 1
   startFormat:
   - blockNum: 4
     spawnLevel: 3

@@ -16,10 +16,8 @@ MonoBehaviour:
   clearTarget:
   - nodeLevel: 1
     count: 5
+  - nodeLevel: 4
+    count: 1
   startFormat: []
   startNodeCount: 8
-  spawnNode:
-  - turnCount: 1
-    spawnLevel: 1
-  - turnCount: 2
-    spawnLevel: 1
+  spawnNode: []

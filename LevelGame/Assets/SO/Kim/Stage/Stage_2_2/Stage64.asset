@@ -15,12 +15,16 @@ MonoBehaviour:
   gameMode: 0
   clearTarget:
   - nodeLevel: 3
-    count: 6
+    count: 7
   startFormat:
   - blockNum: 11
     spawnLevel: 3
     bomb: 0
   startNodeCount: 8
   spawnNode:
+  - turnCount: 1
+    spawnLevel: 3
+  - turnCount: 1
+    spawnLevel: 2
   - turnCount: 1
     spawnLevel: 3

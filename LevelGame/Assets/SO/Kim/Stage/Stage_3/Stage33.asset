@@ -18,9 +18,9 @@ MonoBehaviour:
     count: 1
   startFormat:
   - blockNum: 11
-    spawnLevel: 3
+    spawnLevel: 2
     bomb: 1
   startNodeCount: 8
   spawnNode:
-  - turnCount: 1
+  - turnCount: 2
     spawnLevel: 3

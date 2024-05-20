@@ -16,11 +16,11 @@ MonoBehaviour:
   clearTarget:
   - nodeLevel: 7
     count: 1
+  - nodeLevel: 4
+    count: 1
   startFormat:
   - blockNum: 11
     spawnLevel: 3
     bomb: 0
   startNodeCount: 8
-  spawnNode:
-  - turnCount: 1
-    spawnLevel: 3
+  spawnNode: []

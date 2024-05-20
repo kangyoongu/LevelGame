@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameMode: 2
   clearTarget:
-  - nodeLevel: 6
+  - nodeLevel: 5
     count: 3
   startFormat:
   - blockNum: 1

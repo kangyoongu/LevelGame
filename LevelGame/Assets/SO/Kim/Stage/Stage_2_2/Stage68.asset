@@ -17,7 +17,7 @@ MonoBehaviour:
   - nodeLevel: 1
     count: 1
   - nodeLevel: 2
-    count: 2
+    count: 3
   - nodeLevel: 3
     count: 3
   startFormat:
@@ -28,3 +28,9 @@ MonoBehaviour:
   spawnNode:
   - turnCount: 1
     spawnLevel: 3
+  - turnCount: 2
+    spawnLevel: 1
+  - turnCount: 3
+    spawnLevel: 1
+  - turnCount: 4
+    spawnLevel: 1
