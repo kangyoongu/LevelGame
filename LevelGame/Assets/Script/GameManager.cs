@@ -267,7 +267,7 @@ public class GameManager : SingleTon<GameManager>
             {
                 foreach (NodeInfo node in NodeManager.Instance.fullNodes)
                 {
-                    if (node.num == 10)
+                    if (node.num == 10 && connects[0] != node)
                     {
                         warnings.Add(node.visualMove);
                         node.visualMove.warning.SetActive(true);

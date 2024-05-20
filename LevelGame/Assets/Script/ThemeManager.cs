@@ -30,7 +30,7 @@ public class ThemeManager : SingleTon<ThemeManager>
     public Transform[] themes;
     public Transform get;
     public Transform sell;
-
+    public MeshRenderer[] colums;
     public Action OnChangeTheme;
     public ThemeData CurrentTheme => everyTheme[PlayerPrefs.GetInt("Whear")];
     private void Start()
@@ -86,6 +86,7 @@ public class ThemeManager : SingleTon<ThemeManager>
         NodeManager.Instance.nodeColor = theme.blockColor;
         NodeManager.Instance.currentMat = theme.material;
         NodeManager.Instance.warningColor = theme.warning;
+        
         OnChangeTheme?.Invoke();
 
         foreach (NodeInfo node in NodeManager.Instance.fullNodes)
@@ -95,7 +96,10 @@ public class ThemeManager : SingleTon<ThemeManager>
                 node.visualMove.SetColor();
             }
         }
-
+        foreach(MeshRenderer mesh in colums)
+        {
+            mesh.material = theme.material;
+        }
         for(int i = 0; i < pedigree.Length; i++)
         {
             pedigree[i].color = theme.blockColor[i];

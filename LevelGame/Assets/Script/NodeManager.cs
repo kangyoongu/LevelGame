@@ -152,7 +152,11 @@ public class NodeManager : SingleTon<NodeManager>
 
     public void CheckClear()
     {
-        if (unlockMap.gameObject.activeSelf == true) return;
+        if (unlockMap.gameObject.activeSelf == true)
+        {
+            EndCheck(false);
+            return;
+        }
         clearTargets = new int[stageSO[stageIndex].clearTarget.Count];
         for (int i = 0; i < fullNodes.Length; i++)
         {
@@ -172,6 +176,7 @@ public class NodeManager : SingleTon<NodeManager>
         {
             if (clearTargets[i] < stageSO[stageIndex].clearTarget[i].count)
             {
+                EndCheck(false);
                 return;
             }
         }
@@ -236,7 +241,7 @@ public class NodeManager : SingleTon<NodeManager>
                 index++;
             }
         }
-        for (int i = 1; i < index+1; i++)
+        for (int i = 1; i < index; i++)
         {
             List<NodeInfo> node = new List<NodeInfo>();
             for(int j = 0; j < blankNode.Count; j++)
@@ -265,6 +270,7 @@ public class NodeManager : SingleTon<NodeManager>
         }
         if (chance == false)
         {
+
             StartCoroutine(GameOver());
             RemoveCoin();
             return false;
@@ -394,6 +400,7 @@ public class NodeManager : SingleTon<NodeManager>
                 else
                     MakeVisual(list[index], stageSO[stageIndex].startFormat[i].spawnLevel);
                 list[index] = null;
+                if (stageSO[stageIndex].startFormat[i].spawnLevel > GameManager.Instance.max) GameManager.Instance.max = stageSO[stageIndex].startFormat[i].spawnLevel;
             }
 
             int ind = 0;//생성했던 곳 리스트에서 지우기
@@ -424,10 +431,10 @@ public class NodeManager : SingleTon<NodeManager>
 
             currentMode.LastSpawn(list, 0);
         }
-        yield return new WaitForEndOfFrame();
-        EndCheck(false);
         yield return new WaitForSeconds(0.6f);
         GameManager.Instance.canMove = true;
+        UIManager.Instance.againable = true;
+        CheckClear();
         UIManager.Instance.block[1].SetActive(false);
     }
     private void OnEnable()

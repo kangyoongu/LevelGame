@@ -1974,7 +1974,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -123, y: -96.3}
+  m_AnchoredPosition: {x: -123.00012, y: -96.299805}
   m_SizeDelta: {x: 108, y: 108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &123408815
@@ -7011,18 +7011,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1067760531}
-        m_TargetAssemblyTypeName: RandomPitchPlay, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 952508422}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnClickAgain
@@ -8135,7 +8123,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -906.968, y: -1774.0308}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &621182962
 MonoBehaviour:
@@ -8639,13 +8627,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 644212857}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: -0.56, z: 0.1541}
-  m_LocalScale: {x: 1, y: 1, z: 1.7028899}
+  m_LocalScale: {x: 1, y: 1, z: 1.63}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &647476715
 GameObject:
   m_ObjectHideFlags: 0
@@ -9548,7 +9536,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -227, y: -96.3}
+  m_AnchoredPosition: {x: -227.00012, y: -96.299805}
   m_SizeDelta: {x: 108, y: 108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &714714771
@@ -13113,6 +13101,7 @@ MonoBehaviour:
   - {fileID: 2966437}
   - {fileID: 449081854}
   - {fileID: 844746387}
+  againable: 1
 --- !u!4 &952508423
 Transform:
   m_ObjectHideFlags: 0
@@ -15464,7 +15453,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 15
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -17287,6 +17276,15 @@ ParticleSystem:
           weightedMode: 0
           inWeight: 0
           outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: -0.32652375
+          inSlope: -0.7052659
+          outSlope: -0.7052659
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.13599125
+          outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
@@ -17313,12 +17311,12 @@ ParticleSystem:
           outWeight: 0.22539099
         - serializedVersion: 3
           time: 1
-          value: 0
-          inSlope: 0
-          outSlope: 0
+          value: -0.38774014
+          inSlope: -0.7934796
+          outSlope: -0.7934796
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.11922579
           outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -20445,13 +20443,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1114234023}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.10522498, y: -0.69923365, z: -0.69923365, w: 0.10522498}
-  m_LocalPosition: {x: 3.17, y: -6.72, z: -0.02}
+  m_LocalRotation: {x: 0.1373011, y: -0.38133222, z: -0.9123821, w: 0.05738515}
+  m_LocalPosition: {x: 3.17, y: -0.05000019, z: -6.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -72.884, y: -90, z: -90}
+  m_LocalEulerAnglesHint: {x: -42.85, y: -23.668, z: -163.402}
 --- !u!82 &1114234027
 AudioSource:
   m_ObjectHideFlags: 0
@@ -21333,18 +21331,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1067760531}
-        m_TargetAssemblyTypeName: RandomPitchPlay, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 952508422}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnClickAgain
@@ -21440,10 +21426,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chapter: {fileID: 5376397382275373364, guid: 86aec7504428e764e9db69f0a76bbea8, type: 3}
+  viewport: {fileID: 1368603345}
   stageButton: {fileID: 4226439071341519648, guid: f609aaa70f7e4ab44ba16345f838022e, type: 3}
   chapterParent: {fileID: 621182960}
   scroll: {fileID: 1368603349}
-  pageStageNum: 20
 --- !u!224 &1185959850 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4360879461749163796, guid: f2d0f09e463069c4190d5599ada67d7a, type: 3}
@@ -28433,44 +28419,14 @@ MonoBehaviour:
   stageSO:
   - {fileID: 11400000, guid: 162ae03d839f47d46a6f952012628525, type: 2}
   - {fileID: 11400000, guid: ca81401dc14fb874d8ef62245dfae9df, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
-  - {fileID: 11400000, guid: 5901cfd20252fa845bad13f643ecc672, type: 2}
+  - {fileID: 11400000, guid: 4e930347d9e2d534ba8510ce2ee498b9, type: 2}
+  - {fileID: 11400000, guid: 5704a1fcd5590784c918cb98b24639a2, type: 2}
+  - {fileID: 11400000, guid: 02f2a8bf6d3a0f049bb81a535f4b3d39, type: 2}
+  - {fileID: 11400000, guid: 5f34d1d014eeafb4fa5c25e3700823d8, type: 2}
+  - {fileID: 11400000, guid: 16d8633dd5fcf3144b644e7c48f24f06, type: 2}
+  - {fileID: 11400000, guid: cbc214203d061184f8005a444c2dbe39, type: 2}
+  - {fileID: 11400000, guid: 194c377ca4832554e9c2062a5c6d5dc0, type: 2}
+  - {fileID: 11400000, guid: 06b4df6e932d2d34a92a6d9824527d69, type: 2}
   modeObject:
   - {fileID: 2024807225}
   - {fileID: 1420920330}
@@ -30116,7 +30072,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: da5a022713092ca4cb41e80c800542af, type: 2}
   - {fileID: 11400000, guid: 7a53e8ceeb83b6347b0435b1e7333196, type: 2}
   - {fileID: 11400000, guid: 1a055f10f2dda154eb3098d9ead92379, type: 2}
-  - {fileID: 11400000, guid: ce3f16bf7ec733541902d16a16254413, type: 2}
+  - {fileID: 11400000, guid: a1d9092b898f4e24d87dd462ba08115d, type: 2}
   pedigree:
   - {fileID: 1782574756}
   - {fileID: 207815238}
@@ -30154,6 +30110,26 @@ MonoBehaviour:
   - {fileID: 1171924964}
   get: {fileID: 1233600850}
   sell: {fileID: 609868424}
+  colums:
+  - {fileID: 372807363}
+  - {fileID: 1092343038}
+  - {fileID: 588449798}
+  - {fileID: 1279952547}
+  - {fileID: 1051214848}
+  - {fileID: 1259805825}
+  - {fileID: 36604220}
+  - {fileID: 362185045}
+  - {fileID: 540362358}
+  - {fileID: 1294943396}
+  - {fileID: 1501417272}
+  - {fileID: 2042800706}
+  - {fileID: 1601473659}
+  - {fileID: 979087273}
+  - {fileID: 554434343}
+  - {fileID: 1052535237}
+  - {fileID: 51339467}
+  - {fileID: 20178077}
+  - {fileID: 2048607460}
 --- !u!1 &1750780007
 GameObject:
   m_ObjectHideFlags: 0
@@ -30237,18 +30213,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1067760531}
-        m_TargetAssemblyTypeName: RandomPitchPlay, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 952508422}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnClickAgain
@@ -31129,7 +31093,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 15
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -32952,6 +32916,15 @@ ParticleSystem:
           weightedMode: 0
           inWeight: 0
           outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: -0.32652375
+          inSlope: -0.7052659
+          outSlope: -0.7052659
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.13599125
+          outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
@@ -32978,12 +32951,12 @@ ParticleSystem:
           outWeight: 0.22539099
         - serializedVersion: 3
           time: 1
-          value: 0
-          inSlope: 0
-          outSlope: 0
+          value: -0.38774014
+          inSlope: -0.7934796
+          outSlope: -0.7934796
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.11922579
           outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -36110,13 +36083,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1820642324}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.6992336, y: 0.10522497, z: -0.10522494, w: 0.6992338}
-  m_LocalPosition: {x: -3.17, y: -6.72, z: -0.02}
+  m_LocalRotation: {x: -0.38133124, y: 0.13730112, z: -0.05738495, w: 0.91238254}
+  m_LocalPosition: {x: -3.17, y: -0.05, z: -6.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -72.884, y: 90, z: -90}
+  m_LocalEulerAnglesHint: {x: -42.85, y: 23.668, z: -16.598}
 --- !u!82 &1820642328
 AudioSource:
   m_ObjectHideFlags: 0
@@ -39634,7 +39607,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: cccca570f897c0f4eb049cc1d8bd304a, type: 2}
+  - {fileID: 2100000, guid: a22215128da9c7d4ca8b4b8e93b58f04, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -40777,10 +40750,10 @@ SceneRoots:
   - {fileID: 1054590007}
   - {fileID: 1466675602}
   - {fileID: 469087113}
-  - {fileID: 1820642327}
   - {fileID: 519420032}
   - {fileID: 1906954284}
   - {fileID: 527478485}
+  - {fileID: 1820642327}
   - {fileID: 1114234026}
   - {fileID: 644212861}
   - {fileID: 1605801757}
