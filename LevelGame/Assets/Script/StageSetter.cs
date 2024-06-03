@@ -19,13 +19,10 @@ public class StageSetter : MonoBehaviour
         stageNum = NodeManager.Instance.stageSO.Length;
         RectTransform button = stageButton.GetComponent<RectTransform>();
 
-        /*int row = (int)((viewport.rect.height- 104) / (button.rect.height+33));
-        int colum = (int)((viewport.rect.width- 104) / (button.rect.width+33));
-        pageStageNum = row * colum;*/
-        //print($"{viewport.rect.height} {button.rect.height}");
-        pageStageNum = 32;
+        int row = (int)((viewport.rect.height) / 213);
+        int colum = (int)((viewport.rect.width) / 213);
+        pageStageNum = row * colum;
         int chapterNum = stageNum / pageStageNum;
-        //print($"{pageStageNum}");
 
         for (int i = 0; i < chapterNum; i++)
         {
@@ -46,8 +43,8 @@ public class StageSetter : MonoBehaviour
                 Instantiate(stageButton, parent);
             }
             chapterNum++;
-            scroll.size = chapterNum;
         }
+        scroll.size = chapterNum;
         scroll.Init();
     }
 }

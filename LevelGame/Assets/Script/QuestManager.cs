@@ -40,7 +40,7 @@ public class QuestManager : SingleTon<QuestManager>
         {
             PlayerPrefs.SetInt("Coin", 0);
         }
-        //PlayerPrefs.SetInt("Day", DateTime.Now.Day-1);
+        PlayerPrefs.SetInt("Day", DateTime.Now.Day-1);
         Coin = Coin;
         RewardCount = RewardCount;
     }
@@ -66,7 +66,7 @@ public class QuestManager : SingleTon<QuestManager>
     {
         for(int i = 0; i < quests.Length; i++)
         {
-            quests[i].Init(Random.Range(0, 4), Random.Range(4, 5) * 10, 0, Random.Range(2, 5), Random.Range(10, 31) * 10, 0);
+            quests[i].Init(Random.Range(0, 4), Random.Range(10, 25) * 10, 0, Random.Range(2, 6), Random.Range(2, 5) * 10, 0);
         }
         JsonManager.Instance.SaveData();
     }
@@ -135,6 +135,6 @@ public class QuestManager : SingleTon<QuestManager>
     private void SuccessReward(Transform effectPos)
     {
         PublicAudio.Instance.click.Play();
-        CoinEffect.Instance.Effect(10, 70, effectPos.position);
+        CoinEffect.Instance.Effect(10, 30, effectPos.position);
     }
 }

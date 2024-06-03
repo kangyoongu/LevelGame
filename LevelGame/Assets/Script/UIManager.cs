@@ -66,7 +66,8 @@ public class UIManager : SingleTon<UIManager>
 
     public Image[] targetImages;
     public TextMeshProUGUI[] targetTexts;
-    [HideInInspector] public bool againable = true;
+    [HideInInspector] public bool againable = true;//애 움직일 때, 다시하는중일 때
+    [HideInInspector] public bool againable2 = true;//게임 끝났을 때
     private void Awake()
     {
         //PlayerPrefs.DeleteAll();
@@ -86,6 +87,7 @@ public class UIManager : SingleTon<UIManager>
     }
     public void GameOverUIIn()
     {
+        againable2 = true;
         gameoverSound.Play();
         In(gameOverUI);
         Out(playUI);
@@ -117,7 +119,10 @@ public class UIManager : SingleTon<UIManager>
         digreePack.DOScaleX(0, 0.4f).SetEase(Ease.InBack);
         digree = false;
     }
-    public void SurvivalUIIn() => In(survivalUI);
+    public void SurvivalUIIn()
+    {
+        In(survivalUI);
+    }
     public void SurvivalUIOut() => Out(survivalUI);
     public void ThemeUIIn() => In(themeUI);
     public void ThemeUIOut() => Out(themeUI);
@@ -131,9 +136,17 @@ public class UIManager : SingleTon<UIManager>
         selectModeUI.DOScale(Vector2.one, 0.4f).SetEase(Ease.OutBack);
     }
     public void SelectModeUIOut() => selectModeUI.DOScale(Vector2.zero, 0.3f).SetEase(Ease.InCubic).OnComplete(() => selectModeUI.gameObject.SetActive(false));
-    public void StageClearUIIn() => In(stageClearUI);
+    public void StageClearUIIn()
+    {
+        In(stageClearUI);
+        againable2 = true;
+    }
     public void StageClearUIOut() => Out(stageClearUI);
-    public void StageFailUIIn() => In(stageFailUI);
+    public void StageFailUIIn()
+    {
+        In(stageFailUI);
+        againable2 = true;
+    }
     public void StageFailUIOut() => Out(stageFailUI);
     public void QuestUIIn() => In(questUI);
     public void QuestUIOut() => Out(questUI);
@@ -246,7 +259,7 @@ public class UIManager : SingleTon<UIManager>
     }
     public void OnClickAgain()//다시하기 누르면
     {
-        if (againable == false)
+        if (againable == false || againable2 == false)
         {
             PublicAudio.Instance.beebeeb.PlayOneShot(PublicAudio.Instance.beebeeb.clip);
             return;

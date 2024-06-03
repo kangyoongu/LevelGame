@@ -73,6 +73,8 @@ public class VisualMove : MonoBehaviour
     }
     IEnumerator MoveCoroutine(VisualMove target, int makeNum, int makeLevel)//합치면 그 위치로 움직임
     {
+        if (UIManager.Instance.againable2 == false) yield break;
+
         RandomPitchPlay rand = GetComponent<RandomPitchPlay>();
         rand.Play(clips);
         NodeManager.Instance.OnStartMode?.Invoke();

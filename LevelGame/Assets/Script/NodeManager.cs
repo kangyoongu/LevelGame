@@ -43,6 +43,7 @@ public class NodeManager : SingleTon<NodeManager>
 
     Coroutine delayMakeVisual;
 
+    bool stopDblAction = true;
     private int score = 0;
     public int Score {
         get { return score; }
@@ -180,6 +181,9 @@ public class NodeManager : SingleTon<NodeManager>
                 return;
             }
         }
+
+        UIManager.Instance.againable2 = false;
+
         if (stageIndex >= GameManager.Instance.StageNum)
         {
             GameManager.Instance.StageNum++;
@@ -268,6 +272,7 @@ public class NodeManager : SingleTon<NodeManager>
                 }
             }
         }
+        UIManager.Instance.againable2 = false;
         if (chance == false)
         {
 
@@ -374,6 +379,8 @@ public class NodeManager : SingleTon<NodeManager>
     }
     public IEnumerator StartWork(bool stage = true, int mode = 0)//시작할 때 할 일들
     {
+        if (!stopDblAction) yield break;
+        stopDblAction = false;
         SetAllNumToZero();
         GameManager.Instance.StartGame(stage, mode, stageSO[stageIndex]);
         Score = 0;
@@ -433,6 +440,7 @@ public class NodeManager : SingleTon<NodeManager>
             currentMode.LastSpawn(list, 0);
         }
         yield return new WaitForSeconds(0.6f);
+        stopDblAction = true;
         GameManager.Instance.canMove = true;
         UIManager.Instance.againable = true;
         if (stage)
@@ -484,7 +492,6 @@ public class NodeManager : SingleTon<NodeManager>
     }
     public IEnumerator ResetNodes(Action action, float startDelay = 0f)
     {
-        GameManager.Instance.canMove = false;
         yield return new WaitForSeconds(startDelay);
         removing = true;
         RemoveVisual();
@@ -521,11 +528,15 @@ public class NodeManager : SingleTon<NodeManager>
         while (EndCheck(true))
         {
             List<int> nums = new List<int>();
+            int bomb = 0;
             for (int i = 0; i < fullNodes.Length; i++)
             {
                 if (fullNodes[i].num != 0)
                 {
-                    nums.Add(fullNodes[i].num);
+                    if (fullNodes[i].visualMove as BombVisualMove)
+                        bomb = fullNodes[i].num;
+                    else
+                        nums.Add(fullNodes[i].num);
                 }
                 if (!blankNode.Contains(fullNodes[i]))
                 {
@@ -540,6 +551,14 @@ public class NodeManager : SingleTon<NodeManager>
                 yield return new WaitForSeconds(delay);
                 NodeInfo node = blankNode[Random.Range(0, blankNode.Count)];
                 MakeVisual(node, nums[i]);
+                blankNode.Remove(node);
+            }
+            if(bomb != 0)
+            {
+                float delay = Random.Range(0f, 0.2f);
+                yield return new WaitForSeconds(delay);
+                NodeInfo node = blankNode[Random.Range(0, blankNode.Count)];
+                MakeBombVisual(node, bomb);
                 blankNode.Remove(node);
             }
             yield return new WaitForSeconds(0.5f);
