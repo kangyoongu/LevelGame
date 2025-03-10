@@ -78,6 +78,7 @@ public class VisualMove : MonoBehaviour
         NodeManager.Instance.OnStartMode?.Invoke();
         particle.startColor = NodeManager.Instance.nodeColor[value-1];
         particle.Play();
+        UIManager.Instance.againable = false;
         for(int i = 0; i < positions.Count-1; i++)
         {
             transform.DOMove(positions[i], speed).SetEase(Ease.Linear);
@@ -169,7 +170,12 @@ public class VisualMove : MonoBehaviour
             NodeManager.Instance.EndCheck(false);
         else GameManager.Instance.canMove = true;*/
         GameManager.Instance.canMove = true;
-        NodeManager.Instance.EndCheck(false);
+
+        if (GameManager.Instance.stage)
+            NodeManager.Instance.CheckClear();
+        else
+            NodeManager.Instance.EndCheck(false);
+        UIManager.Instance.againable = true;
         Destroy(gameObject);
     }
     public void ToReset()

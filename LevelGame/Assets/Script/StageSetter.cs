@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class StageSetter : MonoBehaviour
 {
     public GameObject chapter;
+    public RectTransform viewport;
     public GameObject stageButton;
     public Transform chapterParent;
     public SnapScroll scroll;
@@ -17,11 +18,11 @@ public class StageSetter : MonoBehaviour
     {
         stageNum = NodeManager.Instance.stageSO.Length;
         int chapterNum = stageNum / pageStageNum;
-        scroll.size = chapterNum;
 
         for (int i = 0; i < chapterNum; i++)
         {
             Transform parent = Instantiate(chapter, chapterParent).transform;
+            parent.GetComponent<RectTransform>().sizeDelta = new Vector2(viewport.rect.width, viewport.rect.height);
             for(int j = 0; j < pageStageNum; j++)
             {
                 Instantiate(stageButton, parent);
@@ -31,10 +32,13 @@ public class StageSetter : MonoBehaviour
         {
             scroll.size++;
             Transform parent = Instantiate(chapter, chapterParent).transform;
+            parent.GetComponent<RectTransform>().sizeDelta = new Vector2(viewport.rect.width, viewport.rect.height);
             for (int i = 0; i < stageNum % pageStageNum; i++)
             {
                 Instantiate(stageButton, parent);
             }
+            chapterNum++;
+            scroll.size = chapterNum;
         }
         scroll.Init();
     }

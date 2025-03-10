@@ -122,7 +122,10 @@ public class BombVisualMove : VisualMove
             NodeManager.Instance.EndCheck(false);
         else GameManager.Instance.canMove = true;*/
         GameManager.Instance.canMove = true;
-        NodeManager.Instance.EndCheck(false);
+        if (GameManager.Instance.stage)
+            NodeManager.Instance.CheckClear();
+        else
+            NodeManager.Instance.EndCheck(false);
         transform.parent = target.transform.parent;
         Destroy(target.gameObject);
     }
